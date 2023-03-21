@@ -21,9 +21,15 @@ int nNet;
 char *ap0 = (char*)"wally";
 char *ap1;
 
-const char *sigMsg = "we have liftoff";
-
 WiFiServer server (port);
+
+#define MaxClient    10
+WiFiClient clients [MaxClient];
+IPAddress  ips     [MaxClient] = {
+    { 192, 168, 0, 41 }
+};
+int nClient = 1;
+
 
 // ---------------------------------------------------------
 // connect to wifi
@@ -75,11 +81,6 @@ wifiCheck (void)
 }
 
 // ---------------------------------------------------------
-#define MaxClient    10
-WiFiClient clients [MaxClient];
-IPAddress  ips     [MaxClient];
-int nClient;
-
 char buf [80];
 int  bufIdx;
 
@@ -136,7 +137,7 @@ void wifiMonitor (void)
     // scan for new connections
     clients [nClient] = server.available ();
 
-    if (! clients [nClient])
+    if (! clients [nClient] || MaxClient <= nClient)
         return;
 
     ips [nClient] = clients [nClient].remoteIP ();
@@ -164,10 +165,21 @@ wifiUpdate (
         return;
     msecLst = msec;
 
+    printf ("%s:\n", __func__);
+
     for (int n = 0; n < nClient; n++)  {
-        printf ("%s: %2d - %d:%d:%d:%d\n",
+        printf (" %s: %2d - %d:%d:%d:%d",
             __func__, n, ips [n][0], ips [n][1], ips [n][2], ips [n][3]);
 
+        if (! clients [n].connected ())  {
+            printf (" - not connected");
+            clients [n].connect (ips [n], 4445);
+        }
+        else if (! clients [n].print (msg))
+            printf (" - failed");
+        printf ("\n");
+
+#if 0
         if (clients [n].connect (ips [n], 4445))  {
             delay (250);
             if (! clients [n].print (msg));
@@ -175,6 +187,7 @@ wifiUpdate (
         }
         else
             printf ("%s: %d not connected\n", __func__, n);
+#endif
     }
 }
 
@@ -287,8 +300,10 @@ wifi (void)
         break;
 
     case ST_CHK:
-        if (wifiCheck ())
+        if (wifiCheck ())  {
+            delay (300);
             state = ST_MONITOR;
+        }
         break;
 
     case ST_MONITOR:
