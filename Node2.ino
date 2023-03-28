@@ -1,5 +1,5 @@
 
-const char *version = "MD & WV Node2 - 230315a";
+const char *version = "MD & WV Node2 - 230328a";
 
 #include "i2c.h"
 #include "node.h"
@@ -46,7 +46,7 @@ loop ()
     msec = millis ();
     ledStatus ();
 
-    wifi ();
+//  wifi ();
     pcRead ();
 
     tglTest ();

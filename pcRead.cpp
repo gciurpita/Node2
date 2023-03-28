@@ -6,6 +6,39 @@
 #include "node.h"
 #include "pcRead.h"
 
+// -------------------------------------
+const char * portNames [] = {
+    "IODIRA",
+    "IODIRB",
+    "IPOLA",
+    "IPOLB",
+
+    "GPINTENA",
+    "GPINTENB",
+    "DEFVALA",
+    "DEFVALB",
+
+    "INTCONA",
+    "INTCONB",
+    "IOCON",
+    "IOCON",
+
+    "GPPUA",    // 0x0c
+    "GPPUB",
+    "INTFA",
+    "INTFB",
+
+    "INTCAPA",
+    "INTCAPB",
+    "GPIOA",    // 0x12
+    "GPIOB",
+
+    "OLATA",
+    "OLATB",
+};
+const int Nport = sizeof(portNames) / sizeof(char*);
+
+// -------------------------------------
 void
 pcRead (void)
 {
@@ -57,23 +90,14 @@ pcRead (void)
             break;
 
         case 'r':
-            Serial.print ("read: chip ");
-            Serial.print (chip, HEX);
-            Serial.print (", port ");
-            Serial.print (port, HEX);
-            Serial.print (",  ");
-            Serial.println (i2cRead (chip, port));
+            printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
+                chip, port, i2cRead (chip, port), portNames [port]);
             break;
 
         case 'S':
-            for (int port = 0; port <= 0x15; port++)  {
-                Serial.print (" read: chip ");
-                Serial.print (chip, HEX);
-                Serial.print (", port ");
-                Serial.print (port, HEX);
-                Serial.print (",  ");
-                Serial.println (i2cRead (chip, port), HEX);
-            }
+            for (int port = 0; port < Nport; port++)
+                printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
+                    chip, port, i2cRead (chip, port), portNames [port]);
             break;
 
         case 'T':
