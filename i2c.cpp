@@ -5,6 +5,23 @@
 #include "node.h"
 #include "mpc23017.h"
 
+//   MCP23017
+// GPB7 1   28 GPA7
+// GPB6 2   27 GPA6
+// GPB5 3   26 GPA5
+// GPB4 4   25 GPA4
+// GPB3 5   24 GPA3
+// GPB2 6   23 GPA2
+// GPB1 7   22 GPA1
+// GPB0 8   21 GPA0
+
+//  Vdd 9   20 INTA
+//  Vss 10  19 INTB
+//   NC 11  18 Nreset
+//  SCL 12  17 A2
+//  SDA 13  16 A1
+//   NC 14  15 A0
+
 // -----------------------------------------------------------------------------
 //      MPC    Uno  Mega  Esp32
 //  SCK  12 <-  A5   21    22
@@ -30,20 +47,14 @@ byte port    = GPIOA;
 
 // ---------------------------------------------------------
 void i2cWrite (
-    int     chip,
-    int     port,
+    byte    chip,
+    byte    port,
     byte    val )
 {
     chip += chip < Chip20 ? Chip20 : 0;
 
-    if (2 < dbg)  {
-        Serial.print (F ("  i2cWrite: chip "));
-        Serial.print (chip, HEX);
-        Serial.print (", port ");
-        Serial.print (port, HEX);
-        Serial.print (", val ");
-        Serial.println (val, HEX);
-    }
+    if (2 < debug)
+        printf (" %s: c %d, p 0x%02x, v 0x%02x\n", __func__, chip, port, val);
 
     Wire.beginTransmission (chip);
     Wire.write (port);    
@@ -52,12 +63,35 @@ void i2cWrite (
 }
 
 // ---------------------------------------------------------
+void
+i2cWriteBit (
+    byte    adr,
+    bool    b )
+{
+    byte bit  = 1 << (adr & 7);
+    byte chip = adr >> 4;
+    byte port = adr & 0x8 ? GPIOB : GPIOA;
+
+    byte val;
+    if (b)
+        val   =  bit | i2cRead (chip, port);
+    else
+        val   = ~bit & i2cRead (chip, port);
+
+
+    printf ("%s: adr %d, %d, c %d, p %d, val 0x%02x\n",
+        __func__, adr, b, chip, port, val);
+
+    i2cWrite (chip, port, val);
+}
+
+// ---------------------------------------------------------
 byte
 i2cRead (
-    int     chip,
-    int     port )
+    byte    chip,
+    byte    port )
 {
-    if (8 & dbg)
+    if (8 & debug)
         return 0xFF;
 
     chip += chip < Chip20 ? Chip20 : 0;
@@ -66,10 +100,10 @@ i2cRead (
     Wire.write (port);    
     Wire.endTransmission ();
 
-    Wire.requestFrom (chip, 1); //get 1 byte
+    Wire.requestFrom ((int)chip, 1); //get 1 byte
     byte val =  Wire.read ();
 
-    if (3 < dbg)  {
+    if (3 < debug)  {
         Serial.print (F ("  i2cRead: chip "));
         Serial.print (chip, HEX);
         Serial.print (", port ");
@@ -79,6 +113,18 @@ i2cRead (
     }
 
     return val;
+}
+
+// ---------------------------------------------------------
+bool
+i2cReadBit (
+    byte    adr )
+{
+    byte bit  = 1 << (adr & 7);
+    byte chip = adr >> 4;
+
+    byte port = adr & 0x8 ? GPIOB : GPIOA;
+    return bit & i2cRead (chip, port);
 }
 
 // ---------------------------------------------------------
@@ -195,7 +241,7 @@ void bitTgl (
     byte    val0  = i2cRead (chip, reg);
     byte    val1 = val0 ^ (1 << bit);
 
-    if (dbg) {
+    if (debug) {
         sprintf (s, " %s: chip %d, bit %d, val0 0x%02x, val1 0x%02x",
             __func__, chip, bit, val0, val1);
         Serial.println (s);
@@ -213,4 +259,10 @@ i2cInit (void)
     i2cScan ();
     i2cCfg ();
     i2cList ();
+}
+
+// ---------------------------------------------------------
+void
+i2cMon (void)
+{
 }

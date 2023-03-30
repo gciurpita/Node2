@@ -62,42 +62,46 @@ pcRead (void)
         case '8':
         case '9':
             val = c - '0' + (10 * val);
-            if (1 < dbg)
+            if (1 < debug)
                 Serial.println (val);
-            break;
+            return;
 
         case ' ':
-            val = 0;
             break;
 
         case 'D':
-            dbg = val;
-            val = 0;
+            debug = val;
+            break;
+
+        case 'C':
+            chip = val;
             break;
 
         case 'c':
-            chip = val;
-            val  = 0;
+            i2cWriteBit (val, 0);
+            break;
+
+        case 'l':
+            for (int port = 0; port < Nport; port++)
+                printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
+                    chip, port, i2cRead (chip, port), portNames [port]);
             break;
 
         case 'p':
             port = val;
-            val  = 0;
             break;
 
         case 'R':
-            i2cCfg ();
-            break;
-
-        case 'r':
             printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
                 chip, port, i2cRead (chip, port), portNames [port]);
             break;
 
-        case 'S':
-            for (int port = 0; port < Nport; port++)
-                printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
-                    chip, port, i2cRead (chip, port), portNames [port]);
+        case 'r':
+            printf (" %s: adr %d, %d\n", __func__, val, i2cReadBit (val));
+            break;
+
+        case 's':
+            i2cWriteBit (val, 1);
             break;
 
         case 'T':
@@ -111,7 +115,6 @@ pcRead (void)
 
         case 'w':
             i2cWrite (chip, port, val);
-            val  = 0;
             break;
 
         case 'V':
@@ -123,18 +126,24 @@ pcRead (void)
             i2cList ();
             break;
 
+        case 'X':
+            i2cCfg ();
+            break;
+
         case '?':
             printf ("  # D  debug\n");
-            printf ("  # c  set chip 0-7 val\n");
+            printf ("  # C  set chip 0-7 val\n");
+            printf ("  # c  i2cwriteBit 0\n");
+            printf ("    l  read all registers of chip\n");
             printf ("  # p  set port (0-output/1-input) val\n");
-            printf ("    R  reconfig chips\n");
-            printf ("    r  read chip, port\n");
-            printf ("    S  read all registers of chip\n");
+            printf ("  # r  i2xReadBit\n");
+            printf ("  # s  i2cwriteBit 1\n");
             printf ("    T  en/disable tglTest\n");
             printf ("    t  sequentially set each bit in GPIO-A/B\n");
             printf ("  # w  write 8-bit val to chip/port\n");
             printf ("    V  version\n");
             printf ("    v  list chip registers\n");
+            printf ("    X  reconfig chips\n");
             break;
 
         case '\n':      // process simulated button input
@@ -145,6 +154,7 @@ pcRead (void)
             Serial.println (c);
             break;
         }
+        val  = 0;
     }
 }
 
