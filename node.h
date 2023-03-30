@@ -3,6 +3,7 @@
 
 # undef EZSBC
 # define TTGO
+# define I2C
 
 enum {
     ERR_NONE,
@@ -13,7 +14,7 @@ enum {
 };
 
 extern const char   *version;
-extern int           dbg;
+extern unsigned      debug;
 extern int           error;
 extern int           ledMode;
 extern unsigned long msec;

@@ -22,10 +22,42 @@
 //  SDA 13  16 A1
 //   NC 14  15 A0
 
-// -----------------------------------------------------------------------------
+// -------------------------------------
 //      MPC    Uno  Mega  Esp32
 //  SCK  12 <-  A5   21    22
 //  SDA  13 <-  A4   20    21
+
+// -----------------------------------------------------------------------------
+const char * portNames [] = {
+    "IODIRA",
+    "IODIRB",
+    "IPOLA",
+    "IPOLB",
+
+    "GPINTENA",
+    "GPINTENB",
+    "DEFVALA",
+    "DEFVALB",
+
+    "INTCONA",
+    "INTCONB",
+    "IOCON",
+    "IOCON",
+
+    "GPPUA",    // 0x0c
+    "GPPUB",
+    "INTFA",
+    "INTFB",
+
+    "INTCAPA",
+    "INTCAPB",
+    "GPIOA",    // 0x12
+    "GPIOB",
+
+    "OLATA",
+    "OLATB",
+};
+const int Nport = sizeof(portNames) / sizeof(char*);
 
 #define MAX_CHIP    8
 
@@ -54,7 +86,8 @@ void i2cWrite (
     chip += chip < Chip20 ? Chip20 : 0;
 
     if (2 < debug)
-        printf (" %s: c %d, p 0x%02x, v 0x%02x\n", __func__, chip, port, val);
+        printf ("   %s: c 0x%02x, p %2d, v 0x%02x\n",
+            __func__, chip, port, val);
 
     Wire.beginTransmission (chip);
     Wire.write (port);    
@@ -78,9 +111,33 @@ i2cWriteBit (
     else
         val   = ~bit & i2cRead (chip, port);
 
-
-    printf ("%s: adr %d, %d, c %d, p %d, val 0x%02x\n",
+    printf ("  %s: adr %d, %d, c %d, p %d, val 0x%02x\n",
         __func__, adr, b, chip, port, val);
+
+    i2cWrite (chip, port, val);
+}
+
+// ---------------------------------------------------------
+void
+i2cWritePortBit (
+    byte    adr,
+    byte    port,
+    bool    b )
+{
+    byte bit  = 1 << (adr & 7);
+    byte chip = adr >> 4;
+    port     += adr & 0x8 ? 1 : 0;
+
+    byte val = i2cRead (chip, port);
+    printf ("  %s: adr %2d, %d, c %d, p %2d, b 0x%02x, val 0x%02x",
+        __func__, adr, b, chip, port, bit, val);
+
+    if (b)
+        val  |=  bit;
+    else
+        val  &= ~bit;
+
+    printf (" - 0x%02x\n", val);
 
     i2cWrite (chip, port, val);
 }
@@ -128,6 +185,18 @@ i2cReadBit (
 }
 
 // ---------------------------------------------------------
+bool
+i2cReadPortBit (
+    byte    adr,
+    byte    port )
+{
+    byte bit  = 1 << (adr & 7);
+    byte chip = adr >> 4;
+    port     += adr & 0x8 ? 1 : 0;
+    return bit & i2cRead (chip, port);
+}
+
+// ---------------------------------------------------------
 int nChip   = 0;
 
 void i2cCfg (void)
@@ -161,6 +230,16 @@ void i2cList (void)
 
         printf (" %s: %d  0x%02x 0x%02x\n", __func__, n, val0, val1);
     }
+}
+
+// ---------------------------------------------------------
+void
+i2cDump (
+    byte chip)
+{
+    for (int port = 0; port < Nport; port++)
+        printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
+            chip, port, i2cRead (chip, port), portNames [port]);
 }
 
 // ---------------------------------------------------------
@@ -257,8 +336,9 @@ i2cInit (void)
     Wire.begin ();    //start I2C bus
 
     i2cScan ();
-    i2cCfg ();
-    i2cList ();
+ // i2cCfg ();
+ // i2cList ();
+    i2cDump (0);
 }
 
 // ---------------------------------------------------------

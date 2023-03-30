@@ -7,38 +7,6 @@
 #include "pcRead.h"
 
 // -------------------------------------
-const char * portNames [] = {
-    "IODIRA",
-    "IODIRB",
-    "IPOLA",
-    "IPOLB",
-
-    "GPINTENA",
-    "GPINTENB",
-    "DEFVALA",
-    "DEFVALB",
-
-    "INTCONA",
-    "INTCONB",
-    "IOCON",
-    "IOCON",
-
-    "GPPUA",    // 0x0c
-    "GPPUB",
-    "INTFA",
-    "INTFB",
-
-    "INTCAPA",
-    "INTCAPB",
-    "GPIOA",    // 0x12
-    "GPIOB",
-
-    "OLATA",
-    "OLATB",
-};
-const int Nport = sizeof(portNames) / sizeof(char*);
-
-// -------------------------------------
 void
 pcRead (void)
 {
@@ -82,18 +50,11 @@ pcRead (void)
             break;
 
         case 'l':
-            for (int port = 0; port < Nport; port++)
-                printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
-                    chip, port, i2cRead (chip, port), portNames [port]);
+            i2cDump (0);
             break;
 
         case 'p':
             port = val;
-            break;
-
-        case 'R':
-            printf (" %s: chip %d, port %2d 0x%02x %s\n", __func__,
-                chip, port, i2cRead (chip, port), portNames [port]);
             break;
 
         case 'r':

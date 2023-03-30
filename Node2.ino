@@ -1,12 +1,14 @@
+const char *version = "MD & WV Node2 - 230331a";
 
-const char *version = "MD & WV Node2 - 230328a";
+#include <Arduino.h>
 
 #include "i2c.h"
 #include "node.h"
 #include "pcRead.h"
+#include "signals.h"
 #include "wifi_.h"
 
-int   dbg     = 1;
+unsigned debug   = 3;
 int   error   = 0;
 int   ledMode = 0;
 char  s [100];
@@ -46,6 +48,7 @@ loop ()
     msec = millis ();
     ledStatus ();
 
+    sigCheck ();
 //  wifi ();
     pcRead ();
 
@@ -61,7 +64,10 @@ void setup ()
 
     pinMode (PinLedGrn, OUTPUT);
 
+#ifdef I2C
     i2cInit ();
+#endif
+    sigInit ();
 
 #ifdef SIM
     Serial.println (" --------- SIM ---------");
