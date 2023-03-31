@@ -6,14 +6,14 @@
 #include "mpc23017.h"
 
 //   MCP23017
-// GPB7 1   28 GPA7
-// GPB6 2   27 GPA6
-// GPB5 3   26 GPA5
-// GPB4 4   25 GPA4
-// GPB3 5   24 GPA3
-// GPB2 6   23 GPA2
-// GPB1 7   22 GPA1
-// GPB0 8   21 GPA0
+//   8 - GPB0 1   28 GPA7 - 7
+//   9 - GPB1 2   27 GPA6 - 6
+//  10 - GPB2 3   26 GPA5 - 5
+//  11 - GPB3 4   25 GPA4 - 4
+//  12 - GPB4 5   24 GPA3 - 3
+//  13 - GPB5 6   23 GPA2 - 2
+//  14 - GPB6 7   22 GPA1 - 1
+//  15 - GPB7 8   21 GPA0 - 0
 
 //  Vdd 9   20 INTA
 //  Vss 10  19 INTB
@@ -101,6 +101,9 @@ i2cWriteBit (
     byte    adr,
     bool    b )
 {
+    if (0xFF == adr)
+        return;
+
     byte bit  = 1 << (adr & 7);
     byte chip = adr >> 4;
     byte port = adr & 0x8 ? GPIOB : GPIOA;
@@ -111,8 +114,9 @@ i2cWriteBit (
     else
         val   = ~bit & i2cRead (chip, port);
 
-    printf ("  %s: adr %d, %d, c %d, p %d, val 0x%02x\n",
-        __func__, adr, b, chip, port, val);
+    if (1 < debug)
+        printf ("  %s: adr %d, %d, c %d, p %d, val 0x%02x\n",
+            __func__, adr, b, chip, port, val);
 
     i2cWrite (chip, port, val);
 }
@@ -124,20 +128,26 @@ i2cWritePortBit (
     byte    port,
     bool    b )
 {
+    if (0xFF == adr)
+        return;
+
     byte bit  = 1 << (adr & 7);
     byte chip = adr >> 4;
     port     += adr & 0x8 ? 1 : 0;
 
     byte val = i2cRead (chip, port);
-    printf ("  %s: adr %2d, %d, c %d, p %2d, b 0x%02x, val 0x%02x",
-        __func__, adr, b, chip, port, bit, val);
+
+    if (1 < debug)
+        printf ("  %s: adr %2d, %d, c %d, p %2d, b 0x%02x, val 0x%02x",
+            __func__, adr, b, chip, port, bit, val);
 
     if (b)
         val  |=  bit;
     else
         val  &= ~bit;
 
-    printf (" - 0x%02x\n", val);
+    if (1 < debug)
+        printf (" - 0x%02x\n", val);
 
     i2cWrite (chip, port, val);
 }

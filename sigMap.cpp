@@ -47,6 +47,17 @@ SigPin sigPin [] = {
 const int NsigPin = sizeof(sigPin) / sizeof (SigPin);
 
 // -------------------------------------
+//       __,_____________________,_______________________,________
+// 100 /     110       120                   130            140    
+//      ___,_____,_______________,_______________________,________/
+//           111       121                   131            141   
+//            city jct   hyndman  sand patch   myersdale   garrett
+
+//       __,_____________________,__________,____________,________
+// 200 /            210              220                    230    
+//      ___,_____________________,__________,____________,________/
+//                  211              221                   231     
+//            city jct               deal       myersdale   connelsville
 
 SigMap sigMap [] = {
  //   blk  nxt  pin  idx   on,  twr  desc
@@ -54,10 +65,10 @@ SigMap sigMap [] = {
     { 110, 100,  32,   2,  LO,   CB, "B&O VI East" },
     { 111, 121,   0,   0,  LO,   CB, "B&O CB West" },
 
-    { 120, 110,  15,   1,  LO,   HY, "B&O HY East" },
+    { 120, 110,   8,   1,  HI,   HY, "B&O HY East" },
  // { 121, 131,  13,   0,  LO,   HY, "B&O HY West" },
  // { 131, 141,  32,   3,  LO,   HY, "B&O SP West" },
-    { 221, 231,  13,   3,  HI,   HY, "B&O HY West" },
+    { 221, 120,  10,   3,  HI,   HY, "WM  Deal East" },
 
     { 130, 120,  33,   1,  LO,   OH, "B&O MY East" },
     { 141, 130,  32,   2,  LO,   OH, "B&O OH Loop" },

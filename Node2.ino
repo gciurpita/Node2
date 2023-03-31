@@ -1,4 +1,4 @@
-const char *version = "MD & WV Node2 - 230331a";
+const char *version = "MD & WV Node2 - 230331b";
 
 #include <Arduino.h>
 
@@ -8,7 +8,7 @@ const char *version = "MD & WV Node2 - 230331a";
 #include "signals.h"
 #include "wifi_.h"
 
-unsigned debug   = 3;
+unsigned debug   = 1;
 int   error   = 0;
 int   ledMode = 0;
 char  s [100];
