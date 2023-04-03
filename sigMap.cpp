@@ -40,38 +40,43 @@ const int Ntwr = sizeof(twrs)/sizeof(Twr);
 // -------------------------------------
 SigPin sigPin [] = {
  //      Red   Yel   Grn   Whi
-    { {    5,    6,    7, 0xFF }, "Hyndman" },
-    { {    2,    3,    4, 0xFF }, "Sand patch" },
-    { {    0, 0xFF,    1, 0xFF }, "Deal" },
+    { {    5,    6,    7, 0xFF }, },
+    { {    2,    3,    4, 0xFF }, },
+    { {    0, 0xFF,    1, 0xFF }, },
 };
 const int NsigPin = sizeof(sigPin) / sizeof (SigPin);
 
 // -------------------------------------
-//       __,_____________________,_______________________,________
-// 100 /     110       120                   130            140    
-//      ___,_____,_______________,_______________________,________/
-//           111       121                   131            141   
-//            city jct   hyndman  sand patch   myersdale   garrett
-
-//       __,_____________________,__________,____________,________
-// 200 /            210              220                    230    
-//      ___,_____________________,__________,____________,________/
-//                  211              221                   231     
-//            city jct               deal       myersdale   connelsville
-
 SigMap sigMap [] = {
+//       __,_____._______________,_______________________,________   east
+// 100 /     110       120                   130            140
+//      ___,_____,_______________,_______________________,________/  west
+//           111       121                   131            141
+//      cumerberland     hyndman  sand patch   myersdale   garrett
+
  //   blk  nxt  pin  idx   on,  twr  desc
     { 100, 111,  33,   1,  LO,   CB, "B&O CB Loop" },
-    { 110, 100,  32,   2,  LO,   CB, "B&O VI East" },
     { 111, 121,   0,   0,  LO,   CB, "B&O CB West" },
 
-    { 120, 110,   8,   1,  HI,   HY, "B&O HY East" },
- // { 121, 131,  13,   0,  LO,   HY, "B&O HY West" },
- // { 131, 141,  32,   3,  LO,   HY, "B&O SP West" },
-    { 221, 120,  10,   3,  HI,   HY, "WM  Deal East" },
+    { 121, 131,   0,   0,  HI,   HY, "B&O HY West" },
+    { 131, 141,   8,   1,  LO,   HY, "B&O HY Sand" },
 
-    { 130, 120,  33,   1,  LO,   OH, "B&O MY East" },
-    { 141, 130,  32,   2,  LO,   OH, "B&O OH Loop" },
+    { 141, 150,   0,   0,  LO,   OH, "B&O OH TunW" },
+    { 150, 140,   0,   0,  LO,   OH, "B&O OH Loop" },
+    { 140, 130,   0,   0,  LO,   OH, "B&O OH TunE" },
+
+    { 130, 120,   0,   0,  LO,   OH, "B&O HY East" },
+    { 120, 110,   9,   2,  LO,   HY, "B&O Sand Patch East" },
+
+    { 110, 100,   0,   0,  LO,   CB, "B&O CB East" },
+
+//       __,_____________________,__________,____________,________   east
+// 200 /            210              220                    230
+//      ___,_____________________,__________,____________,________/  west
+//                  211              221                   231
+//      cumerberland                  deal       myersdale   connelsville
+
+    { 221,   0,  10,   3,  HI,   HY, "WM  Deal East" },
 };
 const int NsigMap = sizeof(sigMap) / sizeof (SigMap);
 
