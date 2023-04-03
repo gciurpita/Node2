@@ -23,7 +23,8 @@ const char *StateStr [] = {
 enum { Off = LOW, On = HIGH };
 
 // -----------------------------------------------------------------------------
-void sigDisp (void)
+void
+sigDisp (void)
 {
     printf ("%s:\n", __func__);
 
@@ -70,34 +71,55 @@ void sigReport (
 }
 
 // -------------------------------------
-// get block status from table
-bool
-sigBlkGet (
+// return blk idx from table
+static SigMap *
+_sigGetBlk (
     byte blk )
 {
  // printf ("%s:\n", __func__);
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
-        if  (s->blk == blk)
-            return s->occ;
+        if (s->blk == blk)
+            return s;
     }
     printf ("Error: %s - blk not found, %d\n", __func__, blk);
-    return false;
+    return NULL;
 }
+
+// -------------------------------------
+// get block status from table
+#if 0
+static byte *
+_sigBlkPocc (
+    byte blk )
+{
+ // printf ("%s:\n", __func__);
+
+    if (0 == blk)
+        return 0;
+
+    SigMap *s = sigMap;
+    for (int n = 0; n < NsigMap; n++, s++)  {
+        if  (s->blk == blk)
+            return & s->occ;
+    }
+    printf ("Error: %s - blk not found, %d\n", __func__, blk);
+    return 0;
+}
+#endif
 
 // -------------------------------------
 // scan blocks on node
 void sigBlkMon (void)
 {
-    static unsigned long msecLst;
-
 #if 0
+    static unsigned long msecLst;
     if (msec - msecLst < 1500)
         return;
-#endif
 
     msecLst = msec;
+#endif
 
  // printf ("%s:\n", __func__);
 
@@ -119,7 +141,13 @@ void sigBlkMon (void)
                     __func__, s->blk, s->PinBlk, s->occ);
             sigReport (s);
         }
+        else if (2 & debug)  {
+            printf ("%s: blk %d, pin %d, occ %d\n",
+                    __func__, s->blk, s->PinBlk, s->occ);
+        }
     }
+    if (2 & debug)
+        delay (1000);
 }
 
 // -------------------------------------
@@ -178,7 +206,7 @@ void sigUpdate (void)
             s->occLst = s->occ;
             s->state = Stop;
         }
-        else if (sigBlkGet (s->blkNxt))
+        else if (*s->pOccNxt)
             s->state = Approach;
         else
             s->state = Clear;
@@ -253,6 +281,13 @@ void sigInit (void)
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
+        SigMap *t = _sigGetBlk (s->blkNxt);
+        if (t)  {
+            s->pOccNxt = & t->occ;
+            printf (" %s: blk %d, nxt %d, %s\n",
+                __func__, s->blk, s->blkNxt, t->desc);
+        }
+
         if  (s->twr != twr)
             continue;
 
@@ -268,7 +303,7 @@ void sigInit (void)
         if (s->idx)  {
             SigPin *p = & sigPin [s->idx - 1];
             for (unsigned i = 0; i < P_Size; i++)  {
-                printf (" %s: %d ledPin %d\n", __func__, i, p->LedPins [i]);
+                printf ("  %s: %d ledPin %d\n", __func__, i, p->LedPins [i]);
                 if (0xFF != p->LedPins [i])  {
 #ifdef I2C
                     i2cWritePortBit (p->LedPins [i], IODIRA, Out);
@@ -283,6 +318,5 @@ void sigInit (void)
                 }
             }
         }
-        printf ("\n");
     }
 }

@@ -40,7 +40,8 @@ struct SigMap {
     byte        occLst;
     byte        state;
     byte        stateLst;
-    byte        blkStateLst;
+
+    byte       *pOccNxt;
 };
 
 enum { LO = LOW, HI = HIGH };
