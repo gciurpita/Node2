@@ -197,20 +197,18 @@ void sigUpdate (void)
         if  (s->twr != twr || 0 == s->idx)
             continue;
 
-#if 0
-        if (sigBlkGet (s->blk))
-#else
-        if (s->occ)
-#endif
-        {
+        // update state
+        s->state = Clear;
+        if (s->occ) {
             s->occLst = s->occ;
-            s->state = Stop;
+            s->state  = Stop;
         }
-        else if (*s->pOccNxt)
-            s->state = Approach;
-        else
-            s->state = Clear;
+        else if (s->pOccNxt)  {
+            if (*s->pOccNxt)
+                s->state = Approach;
+        }
 
+        // update signal if state change
         if (s->stateLst != s->state)  {
             s->stateLst = s->state;
             delay (50);
@@ -224,7 +222,7 @@ void sigUpdate (void)
 
 #ifdef I2C
             for (unsigned i = 0; i < P_Size; i++)  {
-                if (0 != p->LedPins [i])
+                if (0xFF != p->LedPins [i])
                     i2cWriteBit  (p->LedPins [i], ! s->On);
             }
 
@@ -281,18 +279,28 @@ void sigInit (void)
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
-        SigMap *t = _sigGetBlk (s->blkNxt);
-        if (t)  {
-            s->pOccNxt = & t->occ;
-            printf (" %s: blk %d, nxt %d, %s\n",
-                __func__, s->blk, s->blkNxt, t->desc);
+        // get occ ptr to next blk
+        if (s->blkNxt)  {
+            SigMap *t = _sigGetBlk (s->blkNxt);
+            if (t)  {
+                s->pOccNxt = & t->occ;
+                printf ("   %s: blk %d, nxt %d, %s\n",
+                    __func__, s->blk, s->blkNxt, t->desc);
+            }
         }
 
         if  (s->twr != twr)
             continue;
 
-        printf (" %s: blk %d, nxt %d, pin %2d, idx %d\n",
+        printf (" %s: blk %d, nxt %d, pin %2d, idx %d",
             __func__, s->blk, s->blkNxt, s->PinBlk, s->idx);
+
+        if (s->idx)  {
+            byte  *p = sigPin [s->idx - 1].LedPins;
+            printf (", %2d %2d %2d %2d", p [0], p [1], p [2], p [3]);
+        }
+        printf ("  %s\n", s->desc);
+
 #ifdef I2C
         i2cWritePortBit (s->PinBlk, IODIRA, Inp);
         i2cWritePortBit (s->PinBlk, GPPUA,  1);
