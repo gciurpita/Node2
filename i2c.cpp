@@ -85,7 +85,7 @@ void i2cWrite (
 {
     chip += chip < Chip20 ? Chip20 : 0;
 
-    if (2 < debug)
+    if (8 & debug)
         printf ("   %s: c 0x%02x, p %2d, v 0x%02x\n",
             __func__, chip, port, val);
 
@@ -114,7 +114,7 @@ i2cWriteBit (
     else
         val   = ~bit & i2cRead (chip, port);
 
-    if (1 < debug)
+    if (4 & debug)
         printf ("  %s: adr %d, %d, c %d, p %d, val 0x%02x\n",
             __func__, adr, b, chip, port, val);
 
@@ -137,7 +137,7 @@ i2cWritePortBit (
 
     byte val = i2cRead (chip, port);
 
-    if (1 < debug)
+    if (4 & debug)
         printf ("  %s: adr %2d, %d, c %d, p %2d, b 0x%02x, val 0x%02x",
             __func__, adr, b, chip, port, bit, val);
 
@@ -170,7 +170,7 @@ i2cRead (
     Wire.requestFrom ((int)chip, 1); //get 1 byte
     byte val =  Wire.read ();
 
-    if (3 < debug)  {
+    if (16 & debug)  {
         Serial.print (F ("  i2cRead: chip "));
         Serial.print (chip, HEX);
         Serial.print (", port ");
@@ -270,9 +270,7 @@ void i2cScan ()
     }
 
     if (nChip == 0)
-        printf ("No I2C devices found\n");
-    else
-        printf ("done\n");
+        printf (" No I2C devices found\n");
 }
 
 // ---------------------------------------------------------
@@ -330,7 +328,7 @@ void bitTgl (
     byte    val0  = i2cRead (chip, reg);
     byte    val1 = val0 ^ (1 << bit);
 
-    if (debug) {
+    if (4 & debug) {
         sprintf (s, " %s: chip %d, bit %d, val0 0x%02x, val1 0x%02x",
             __func__, chip, bit, val0, val1);
         Serial.println (s);
@@ -348,7 +346,7 @@ i2cInit (void)
     i2cScan ();
  // i2cCfg ();
  // i2cList ();
-    i2cDump (0);
+ // i2cDump (0);
 }
 
 // ---------------------------------------------------------
