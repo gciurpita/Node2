@@ -5,6 +5,7 @@
 #include "i2c.h"
 #include "node.h"
 #include "pcRead.h"
+#include "signals.h"
 
 // -------------------------------------
 void
@@ -30,7 +31,7 @@ pcRead (void)
         case '8':
         case '9':
             val = c - '0' + (10 * val);
-            if (1 < debug)
+            if (32 & debug)
                 Serial.println (val);
             return;
 
@@ -41,12 +42,20 @@ pcRead (void)
             debug = val;
             break;
 
+        case 'd':
+            sigDisp ();
+            break;
+
         case 'C':
             chip = val;
             break;
 
         case 'c':
             i2cWriteBit (val, 0);
+            break;
+
+        case 'I':
+            sigInit ();
             break;
 
         case 'l':
@@ -93,8 +102,10 @@ pcRead (void)
 
         case '?':
             printf ("  # D  debug\n");
+            printf ("    d  sigDisp)()\n");
             printf ("  # C  set chip 0-7 val\n");
             printf ("  # c  i2cwriteBit 0\n");
+            printf ("    I  sigInit)()\n");
             printf ("    l  read all registers of chip\n");
             printf ("  # p  set port (0-output/1-input) val\n");
             printf ("  # r  i2xReadBit\n");
