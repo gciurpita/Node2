@@ -1,4 +1,4 @@
-const char *version = "MD & WV Node2 - 230403b";
+const char *version = "MD & WV Node2 - 230404a";
 
 #include <Arduino.h>
 

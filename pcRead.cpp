@@ -66,6 +66,10 @@ pcRead (void)
             port = val;
             break;
 
+        case 'R':
+            i2cReset ();
+            break;
+
         case 'r':
             printf (" %s: adr %d, %d\n", __func__, val, i2cReadBit (val));
             break;
@@ -108,7 +112,8 @@ pcRead (void)
             printf ("    I  sigInit)()\n");
             printf ("    l  read all registers of chip\n");
             printf ("  # p  set port (0-output/1-input) val\n");
-            printf ("  # r  i2xReadBit\n");
+            printf ("  # r  i2cReadBit\n");
+            printf ("    R  i2cReset()\n");
             printf ("  # s  i2cwriteBit 1\n");
             printf ("    T  en/disable tglTest\n");
             printf ("    t  sequentially set each bit in GPIO-A/B\n");

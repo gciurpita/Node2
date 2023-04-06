@@ -12,6 +12,7 @@ void i2cWriteBit (byte adr,  bool val);
 void i2cWritePortBit (byte adr, byte port, bool val);
 byte i2cRead     (byte chip, byte port);
 bool i2cReadBit  (byte adr);
+void i2cReset    (void);
 void i2cCfg      (void);
 void i2cDump     (byte chip);
 void i2cList     (void);
