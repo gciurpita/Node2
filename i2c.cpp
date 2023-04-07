@@ -341,9 +341,10 @@ void bitTgl (
 const byte PinReset = 19;
 void i2cReset (void)
 {
-    digitalWrite (PinReset, LOW);
     pinMode (PinReset, OUTPUT);
-    pinMode (PinReset, INPUT_PULLUP);
+    digitalWrite (PinReset, LOW);
+    delay (500);
+    digitalWrite (PinReset, HIGH);
 }
 
 // ---------------------------------------------------------
