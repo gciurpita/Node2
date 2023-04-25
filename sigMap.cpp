@@ -76,7 +76,7 @@ SigMap sigMap [] = {
 //                  211              221                   231
 //      cumerberland                  deal       myersdale   connelsville
 
-    { 221,   0,  10,   3,  LO,   HY, "WM  Deal East" },
+    { 221,   0,  10,   3,  HI,   HY, "WM  Deal East" },
 };
 const int NsigMap = sizeof(sigMap) / sizeof (SigMap);
 
