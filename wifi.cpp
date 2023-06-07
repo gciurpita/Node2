@@ -1,62 +1,138 @@
-# ifdef ESP32
-#  include <WiFi.h>
-# elif defined (ESP8266)
-#  include <ESP8266WiFi.h>
-# endif
 
-// #include "ee.h"
+#ifdef ESP32
+#include <WiFi.h>
+# elif defined(ESP8266)
+# include <ESP8266WiFi.h>
+#endif
+
+#include "eeprom.h"
 #include "node.h"
-// #include "pcRead.h"
-// #include "signals.h"
-#include "wifi_.h"
+#include "wifi.h"
+
+int dbgWifi = 1;
 
 // -----------------------------------------------------------------------------
 // WiFi and JMRI Server Definitions
+WiFiClient          wifi;
 
-const char *name  = "Node2";        // for now
-const char *node  = "192.168.0.41";
-const int   port  = 4445;           // 4986
-int nNet;
+#undef EEPROM_CREDENTIALS
+ 
+#if 0
+const char *ssid  = "wally";
+const char *pass  = "Pan0rama";
 
-char *ap0 = (char*)"wally";
-char *ap1;
+const char *host  = "192.168.0.41";
 
-WiFiServer server (port);
+#else
+char host [STR_SIZE] = "";
+char ssid [STR_SIZE] = "";
+char pass [STR_SIZE] = "";
+#endif
+
+static int  port  = 4445;
+
+// -------------------------------------
+const char *Nstr [] = { "N_NUL", "N_INIT", "N_UP", "N_DOWN" };
+enum { N_NUL, N_INIT, N_UP, N_DOWN };
+
+struct Node {
+    int        state;
+    char       ip [16];
+ // IPAddress  ip;
+    WiFiClient client;
+};
 
 #define MaxClient    10
-WiFiClient clients [MaxClient];
-IPAddress  ips     [MaxClient] = {
-    { 192, 168, 0, 41 }
+Node nodes [MaxClient] = {
+    { N_INIT, "192.168.0.41" },
 };
-int nClient = 1;
+int nNodes = 1;
 
-
-// ---------------------------------------------------------
-// connect to wifi
-void wifiInit (
-    const char *ssid,
-    const char *pass )
+// -------------------------------------
+void
+wifiIpAdd (
+    char *ip )
 {
-    printf ("%s: ssid %s, password %s\n", __func__, ssid, pass);
-
-    WiFi.mode (WIFI_STA);
-
-    if (name [0])  {
-#ifdef ESP32
-        WiFi.hostname (name);
-#else
-        printf ("default hostname: %s\n", WiFi.hostname ().c_str ());
-        WiFi.hostname (name);
-        printf ("new hostname: %s\n", WiFi.hostname ().c_str ());
-#endif
+    if (MaxClient <= nNodes)  {
+        printf ("%s: maxClients, %d, reached\n", __func__, nNodes);
+        return;
     }
 
-    WiFi.begin (ssid, pass);
-    server.begin ();
+    Node *p = nodes;
+    for (int n = 0; n < nNodes; n++, p++)
+        if (! strcmp (p->ip, ip))  {
+            printf ("%s: duplicate %s\n", __func__, ip);
+            return;
+        }
+
+    nodes [nNodes].state = N_INIT;
+    strcpy (nodes [nNodes].ip, ip);
+    nNodes++;
 }
 
 // -------------------------------------
-// report if connected to wifi access point
+void
+wifiIpClr (void)
+{
+    nNodes = 0;
+}
+
+// -------------------------------------
+char *
+wifiIpGet (
+    int idx )
+{
+    if (nNodes <= idx)
+        return NULL;
+    return nodes [idx].ip;
+}
+
+// -------------------------------------
+void
+wifiIpList (void)
+{
+    printf ("%s:\n", __func__);
+    Node *p = nodes;
+    for (int n = 0; n < nNodes; n++, p++)  {
+        printf (" %s: %2d: %d %-8s ", __func__, n, p->state, Nstr [p->state]);
+        printf ("%s\n", p->ip);
+    }
+}
+
+// ---------------------------------------------------------
+enum { ST_NUL, ST_INIT, ST_GET_CREDENTIALS, ST_CHK, ST_UP, ST_ERROR };
+
+const char *wifiStStr [] = {
+    "ST_NUL",
+    "ST_INIT",
+    "ST_GET_CREDENTIALS",
+    "ST_CHK",
+    "ST_UP",
+    "ST_ERROR"
+};
+
+int state    = ST_NUL;
+int stateLst = ST_NUL;
+
+// -------------------------------------
+// connect to wifi
+void wifiInit (void)
+{
+    WiFi.mode (WIFI_STA);
+
+#ifdef ESP32
+    WiFi.hostname (host);
+#else
+    printf ("default hostname: %s\n", WiFi.hostname().c_str());
+    WiFi.hostname (name);
+    printf ("new hostname: %s\n", WiFi.hostname().c_str());
+#endif
+
+    printf ("%s: ssid %s, pass %s\n", __func__, ssid, pass);
+    WiFi.begin (ssid, pass);
+}
+
+// -------------------------------------
 bool
 wifiCheck (void)
 {
@@ -80,235 +156,154 @@ wifiCheck (void)
    return true;
 }
 
-// ---------------------------------------------------------
-char buf [80];
-int  bufIdx;
-
-// ---------------------------------------------------------
-// respond to a new connection
-// https://docs.arduino.cc/library-examples/wifi-library/WiFiWebServer
-void wifiRespond (
-    int             nClient,
-    unsigned long   msec)
+// -------------------------------------------------------------------
+// connect to jmri
+void nodeConnect (void)
 {
-   WiFiClient client = clients [nClient];
+    do {
+        printf (" ... Node connecting - %s %d\n", host, port);
 
-   bool currentLineIsBlank = true;
-   while (client.connected ()) {
-      if (client.available ()) {
-        char c = client.read ();
- //     Serial.write (c);
-
-        // if you've gotten to the end of the line (received a newline
-        // character) and the line is blank, the http request has ended,
-        // so you can send a reply
-        if (c == '\n' && currentLineIsBlank) {
-          // send a standard http response header
-          client.println ("HTTP/1.1 200 OK");
-          client.println ("Content-Type: text/html");
- //       client.println ("Connection: close");  // the connection will be closed after completion of the response
- //       client.println ("Refresh: 5");  // refresh the page automatically every 5 sec
-          client.println ();
-
-          client.println ("<!DOCTYPE HTML>");
-          client.println ("<html>");
-          client.print ("<h4>Hello World</h4>");
-          client.println (msec);
-          client.println ("</html>");
-        }
-
-        if (c == '\n')              // starting a new line
-          currentLineIsBlank = true;
-        else if (c != '\r')         // not \n norr
-          currentLineIsBlank = false;
-      }
-
-#if 0
-      delay (1);
-      client.stop ();                   // close the connection:
-#endif
-    }
+    } while (! wifi.connect(host, port));
+    printf (" connected Node %s %d\n", host, port);
 }
 
 // ---------------------------------------------------------
-// recognize a new connection
-void wifiMonitor (void)
+// display wifi responses on serial monitor
+void wifiReceive (void)
 {
-    // scan for new connections
-    clients [nClient] = server.available ();
+    static char cLst = 0;
 
-    if (! clients [nClient] || MaxClient <= nClient)
-        return;
+    while (wifi.available()) {
+        char c = wifi.read ();
+        if ('\r' == c)
+            continue;
 
-    ips [nClient] = clients [nClient].remoteIP ();
-    for (int n = 0; n < nClient; n++)  {
-        if (ips [n] == ips [n])
-            return;
+        if ('\n' == cLst && '\n' == c)
+            continue;
+
+        Serial.write (c);
+        cLst = c;
     }
-        
-    printf ("%s: new connection %d:%d:%d:%d\n", __func__,
-        ips [nClient][0], ips [nClient][1], ips [nClient][2], ips [nClient][3]);
-
-//      wifiRespond (nClient);
-    nClient++;
 }
 
 // ---------------------------------------------------------
 // common routine for sending strings to wifi and flushing
 void
-wifiUpdate (
-    const char *msg )
+wifiSend (
+    const char*  msg )
 {
-    static unsigned long msecLst;
-
-    if (msec - msecLst < 2000)
+    if (ST_UP != state)
         return;
-    msecLst = msec;
 
-    printf ("%s:\n", __func__);
+    if (dbgWifi)  {
+        printf ("wifiSend: %s\n", msg);
+    }
 
-    for (int n = 0; n < nClient; n++)  {
-        printf (" %s: %2d - %d:%d:%d:%d",
-            __func__, n, ips [n][0], ips [n][1], ips [n][2], ips [n][3]);
-
-        if (! clients [n].connected ())  {
-            printf (" - not connected");
-            clients [n].connect (ips [n], 4445);
+    Node *p = nodes;
+    for (int n = 0; n < nNodes; n++, p++)  {
+        // handle re/connect
+        if (N_INIT == p->state)  {
+            if (p->client.connect (p->ip, port))  {
+                p->state = N_UP;
+                Serial.print ("  successful connect to ");
+            }
+            else {
+                p->state = N_DOWN;
+                Serial.print ("    failed connect to ");
+            }
+            Serial.println (p->ip);
         }
-        else if (! clients [n].print (msg))
-            printf (" - failed");
-        printf ("\n");
 
-#if 0
-        if (clients [n].connect (ips [n], 4445))  {
-            delay (250);
-            if (! clients [n].print (msg));
-                printf ("    %s: %d failed to connect\n", __func__, n);
+        // attempt send if connected
+        if (N_UP == p->state)  {
+            if (! p->client.print (msg)) {
+                p->state = N_INIT;      // make one attempt to re-connect
+                Serial.print ("    failed to send to  ");
+                Serial.println (p->ip);
+            }
+            else {
+                p->client.flush ();
+                Serial.print ("  send succeeded to  ");
+                Serial.println (p->ip);
+            }
         }
-        else
-            printf ("%s: %d not connected\n", __func__, n);
-#endif
     }
 }
 
-// -----------------------------------------------------------------------------
-enum { ST_GET_CREDENTIALS, ST_INIT, ST_CHK, ST_MONITOR, ST_ERROR };
-
-const char *wifiStStr [] = {
-    "ST_GET_CREDENTIALS",
-    "ST_INIT",
-    "ST_CHK",
-    "ST_MONITOR",
-    "ST_ERROR"
-};
-
-int state = ST_INIT;
-int stateLst;
-
-// -------------------------------------
-#define NUL   '\0'
+// ---------------------------------------------------------
 void
 wifiGetCredentials (void)
 {
-    if (NUL == ap0 [0] && NUL == ap1 [0])  {
-        printf ("  %s: no ap0 or ap1\n", __func__);
+#ifdef EEPROM_CREDENTIALS
+    if (! eepromRead (ID_HOSTNAME, host, sizeof(host)))  {
+        printf ("%s: no hostname\n", __func__);
+        state = ST_ERROR;
+        error = ERR_NO_HOST;
+    }
+
+    if (! eepromRead (ID_SSID, ssid, sizeof(host)))  {
+        printf ("%s: no ssid\n", __func__);
         state = ST_ERROR;
         error = ERR_NO_SSID;
     }
-}
 
-// -------------------------------------
-bool
-wifiMatchSSID (
-    char *ap )
-{
-    char *ssid = strtok (ap,   ",");
-    char *pass = strtok (NULL, ",");
-
-    printf ("%s: ssid %s, pass %s\n", __func__, ssid, pass);
-
-    for (int i = 0; i < nNet; i++)  {
-        if (! strcmp (ssid, WiFi.SSID (i).c_str ()))  {
-            printf (" %s: match\n", __func__);
-            wifiInit (ssid, pass);
-            return true;
-        }
+    if (! eepromRead (ID_PASSWORD, pass, sizeof(host))) {
+        printf ("%s: no password\n", __func__);
+        state = ST_ERROR;
+        error = ERR_NO_PASS;
     }
-
-    return false;
+#endif
 }
 
 // -------------------------------------
 void
 wifiReset (void)
 {
-    state = ST_GET_CREDENTIALS;
-}
-
-// -------------------------------------
-// https://openlabpro.com/guide/scanning-of-wifi-on-esp32-controller/
-void
-wifiScan (void)
-{
-    printf ("%s:", __func__);
-
-    // WiFi.scanNetworks will return the number of networks found
-    nNet = WiFi.scanNetworks ();
-    if (nNet == 0) {
-        printf ("  no networks found\n");
-    }
-    else {
-        printf ("  %2d networks found\n", nNet); 
-        for (int i = 0; i < nNet; ++i) {
-            printf (" %s: %2d - %s (%d) %s\n", __func__, i,
-                WiFi.SSID (i).c_str (),
-                WiFi.RSSI (i),
-                WiFi.encryptionType (i) == WIFI_AUTH_OPEN ? "open" : "locked");
-        }
-    }
+    printf ("%s: ssid %s, pass %s, host %s\n", __func__, ssid, pass, host);
+    state = ST_NUL;
 }
 
 // -------------------------------------
 void
-wifi (void)
+wifiMonitor (void)
 {
     if (stateLst != state)
         printf ("%s: %d %s\n", __func__, state, wifiStStr [state]);
     stateLst = state;
 
     switch (state)  {
+    case ST_NUL:
+        if (ssid [0])
+            state = ST_INIT;
+        else {
+            printf ("%s: no SSID\n", __func__);
+            state = ST_ERROR;
+        }
+        break;
+
+    case ST_INIT:
+        wifiInit ();
+        state = ST_CHK;
+        break;
+
+#if 0
     case ST_GET_CREDENTIALS:
         wifiGetCredentials ();
 
         if (ST_ERROR != state)  {
             printf ("%s: credentials acquired\n", __func__);
-
-            wifiScan ();
-            if (! wifiMatchSSID (ap0))  {
-                error = ERR_NO_NET;
-                state = ST_ERROR;
-            }
-            else  {
-                state = ST_CHK;
-            }
+            wifiInit ();
+            state = ST_CHK;
         }
         break;
-
-    case ST_INIT:
-        wifiInit ("wally", "Pan0rama");
-        state = ST_CHK;
-        break;
+#endif
 
     case ST_CHK:
-        if (wifiCheck ())  {
-            delay (300);
-            state = ST_MONITOR;
-        }
+        if (wifiCheck ())
+            state = ST_UP;
         break;
 
-    case ST_MONITOR:
-        wifiMonitor ();
-        wifiUpdate ("MD & WV");
+    case ST_UP:
         break;
 
     case ST_ERROR:

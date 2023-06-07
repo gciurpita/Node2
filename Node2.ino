@@ -1,4 +1,4 @@
-const char *version = "MD & WV Node2 - 230425a";
+const char *version = "MD & WV Node2 - 230607a";    // from 0425a
 
 #include <Arduino.h>
 
@@ -17,8 +17,7 @@ unsigned long msec;
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
+const char *processor = "TTGO";
 const byte PinLedGrn = 5;
 
 struct LedPeriod {

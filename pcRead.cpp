@@ -1,137 +1,207 @@
-// process commands from serial monitor
-
 #include <Arduino.h>
 
-#include "i2c.h"
+#include "eeProm.h"
 #include "node.h"
 #include "pcRead.h"
 #include "signals.h"
+#include "wifi.h"
 
-// -------------------------------------
-void
-pcRead (void)
+// -----------------------------------------------------------------------------
+#define MAX_TOKS   10
+static int    _nToks;
+static char * _toks [MAX_TOKS];
+static int    _vals [MAX_TOKS];
+
+int
+_tokenize (
+    char *s)
 {
-    static byte chip = 0;
-    static byte port = 0;
-    static int  val  = 0;
+    int n = 0;
+    for (_toks [n] = strtok (s, " "); _toks [n]; ) {
+        _vals [n] = atoi (_toks [n]);
+     // printf ("   %2d: %6d %s\n", n, _vals [n], _toks [n]);
+        _toks [++n] = strtok (NULL, " ");
+    }
 
-#define None    -1
-    if (Serial.available ()) {
-        int c = Serial.read ();
+    return _nToks = n;
+}
+
+// -----------------------------------------------------------------------------
+void
+_cli (
+    char * buf )
+{
+    int nTok = _tokenize (buf);
+
+    if (! strcmp (_toks [0], "host") && 2 == nTok)
+        strcpy (host, _toks [1]);
+
+    else if (! strcmp (_toks [0], "pass") && 2 == nTok)
+        strcpy (pass, _toks [1]);
+
+    else if (! strcmp (_toks [0], "ssid") && 2 == nTok)
+        strcpy (ssid, _toks [1]);
+
+    else if (! strcmp (_toks [0], "ipAdd") && 2 == nTok)
+        wifiIpAdd (_toks [1]);
+
+    else if (! strcmp (_toks [0], "ipClr"))
+        wifiIpClr ();
+
+    else if (! strcmp (_toks [0], "ipList"))
+        wifiIpList ();
+
+    else {
+        printf ("%s: invalid input\n", __func__);
+        for (int n = 0; n < nTok; n++)
+            printf (" %s: %2d  %s\n", __func__, n, _toks [n]);
+    }
+}
+
+// -----------------------------------------------------------------------------
+void pcRead ()
+{
+    static int  val = 0;
+    static bool quote = false;
+    static char str [40];
+    static int  idx = 0;
+
+    if (Serial.available ())  {
+        char c = Serial.read ();
+
+        if (quote)  {
+            if ('"' == c)  {
+                quote = false;
+                str [idx] = '\0';
+            }
+            else  {
+                str [idx++] = c;
+                if (idx == sizeof(str)-1)  {
+                    str [idx] = '\0';
+                    quote     = false;
+                }
+            }
+            return;
+        }
 
         switch (c)  {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            val = c - '0' + (10 * val);
-            if (32 & debug)
-                Serial.println (val);
+        case '"':
+            quote = true;
+            idx   = 0;
+            break;
+
+        case '0' ... '9':
+            val = 10*val + c - '0';
             return;
 
-        case ' ':
-            break;
-
-        case 'D':
-            debug = val;
-            break;
-
-        case 'd':
-            sigDisp ();
-            break;
-
-        case 'C':
-            chip = val;
+        case '_':
+            {
+                char buf [80];
+                int n = Serial.readBytesUntil (';', buf, sizeof(buf)-1);
+                buf [n] = '\0';
+                _cli (buf);
+            }
             break;
 
         case 'c':
-            i2cWriteBit (val, 0);
+            printf (" pin %d  set\n", val);
+            digitalWrite (val, LOW);
             break;
 
-        case 'I':
+        case 'C':
+            eepromClear ();
+            break;
+
+        case 'i':
             sigInit ();
             break;
 
+        case 'I':
+            pinMode (val, INPUT_PULLUP);
+            break;
+
         case 'l':
-            i2cDump (0);
+            eepromLoad ();
+            break;
+
+        case 'o':
+            wifiSend ("ok");
             break;
 
         case 'p':
-            port = val;
+            printf (" processor: %s\n", processor);
             break;
 
-        case 'R':
-            i2cReset ();
-            break;
-
-        case 'r':
-            printf (" %s: adr %d, %d\n", __func__, val, i2cReadBit (val));
+        case 'O':
+            pinMode (val, OUTPUT);
             break;
 
         case 's':
-            i2cWriteBit (val, 1);
+            printf (" pin %d  set\n", val);
+            digitalWrite (val, HIGH);
             break;
 
-        case 'T':
-            tglTestEn  ^= 1;
-            ledMode = tglTestEn ? 1 : 0; 
+        case 'S':
+            eepromScan ();
             break;
 
-        case 't':
-            test (chip);
+        case 'r':
+            printf (" pin %d  %d\n", val, digitalRead (val));
+            val = 0;
+            break;
+
+        case 'R':
+            char buf [40];
+            eepromRead (val, buf, 40);
+            Serial.println (buf);
+            val = 0;
+            break;
+
+        case 'v':
+            printf (" version: %s\n", version);
+            break;
+
+        case 'U':
+            eepromUpdate ();
+            break;
+
+        case 'W':
+            eepromWrite (val, str);
+            val = 0;
             break;
 
         case 'w':
-            i2cWrite (chip, port, val);
+            wifiReset ();
             break;
 
-        case 'V':
-            Serial.print ("\nversion: ");
-            Serial.println (version);
-           break;
-
-        case 'v':
-            i2cList ();
-            break;
-
-        case 'X':
-            i2cCfg ();
+        case 'Y':
+            wifiReset ();
             break;
 
         case '?':
-            printf ("  # D  debug\n");
-            printf ("    d  sigDisp)()\n");
-            printf ("  # C  set chip 0-7 val\n");
-            printf ("  # c  i2cwriteBit 0\n");
-            printf ("    I  sigInit)()\n");
-            printf ("    l  read all registers of chip\n");
-            printf ("  # p  set port (0-output/1-input) val\n");
-            printf ("  # r  i2cReadBit\n");
-            printf ("    R  i2cReset()\n");
-            printf ("  # s  i2cwriteBit 1\n");
-            printf ("    T  en/disable tglTest\n");
-            printf ("    t  sequentially set each bit in GPIO-A/B\n");
-            printf ("  # w  write 8-bit val to chip/port\n");
-            printf ("    V  version\n");
-            printf ("    v  list chip registers\n");
-            printf ("    X  reconfig chips\n");
-            break;
-
-        case '\n':      // process simulated button input
-            break;
-
-        default:
-            Serial.print ("unknown: ");
-            Serial.println (c);
+            printf ("   a   send \"antidisestablishmentarianism\"\n");
+            printf ("  #c   digitalWrite (#, LOW)\n");
+            printf ("   C   eepromClear\n");
+            printf ("   i   sigInit\n");
+            printf ("  #I   pinMode (#, INPUT_PULLUP)\n");
+            printf ("   l   eepromtLoad\n");
+            printf ("   n   send name\n");
+            printf ("   o   send \"ok\"\n");
+            printf ("   p   processor type\n");
+            printf ("  #O   pinMode (#, OUTPUT)\n");
+            printf ("  #r   digitalRead (#)\n");
+            printf ("  #R   eepromRead\n");
+            printf ("  #s   digitalWrite (#, HIGH)\n");
+            printf ("   S   eepromScan\n");
+            printf ("   u   eepromtUpdate\n");
+            printf ("   v   version\n");
+            printf ("   W   eepromtWrite\n");
+            printf ("   W   wifiReset\n");
+            printf ("   ?   help\n");
             break;
         }
-        val  = 0;
+
+        val = 0;
     }
 }
 

@@ -14,6 +14,7 @@ enum {
 };
 
 extern const char   *version;
+extern const char   *processor;
 extern unsigned      debug;
 extern int           error;
 extern int           ledMode;
