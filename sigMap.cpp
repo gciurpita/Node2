@@ -23,17 +23,9 @@
 Twr twrs [] = {
     { TwrNul, 0, 0, 0 },
 
-#undef CLUB
-#if CLUB
-    { CB, "CB", "Cumberland", "192.168.0.11" },
-    { HY, "HY", "Hyndman",    "192.168.0.22" },
-    { OH, "OH", "Ohiopyle",   "192.168.0.33" },
-#else
     { CB, "CB", "Cumberland", "192.168.0.100" },
     { HY, "HY", "Hyndman",    "192.168.0.244" },
-    { OH, "OH", "Ohiopyle",   "192.168.0.33" },
-    { LT, "LT", "Laptop",     "192.168.0.41" },
-#endif
+    { GA, "GA", "Garrett",    "192.168.0.33" },
 };
 const int Ntwr = sizeof(twrs)/sizeof(Twr);
 
@@ -61,11 +53,11 @@ SigMap sigMap [] = {
     { 121, 131,   0,   0,  HI,   HY, "B&O HY West" },
     { 131, 141,   8,   1,  HI,   HY, "B&O HY Sand" },
 
-    { 141, 150,   0,   0,  HI,   OH, "B&O OH TunW" },
-    { 150, 140,   0,   0,  HI,   OH, "B&O OH Loop" },
-    { 140, 130,   0,   0,  HI,   OH, "B&O OH TunE" },
+    { 141, 150,   0,   0,  HI,   GA, "B&O GA TunW" },
+    { 150, 140,   0,   0,  HI,   GA, "B&O GA Loop" },
+    { 140, 130,   0,   0,  HI,   GA, "B&O GA TunE" },
 
-    { 130, 120,   0,   0,  HI,   OH, "B&O HY East" },
+    { 130, 120,   0,   0,  HI,   HY, "B&O HY East" },
     { 120, 110,   9,   2,  HI,   HY, "B&O Sand Patch East" },
 
     { 110, 100,   0,   0,  HI,   CB, "B&O CB East" },

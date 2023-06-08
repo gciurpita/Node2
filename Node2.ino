@@ -1,12 +1,13 @@
-const char *version = "MD & WV Node2 - 230607a";    // from 0425a
+const char *version = "MD & WV Node2 - 230608a";    // from 0425a
 
 #include <Arduino.h>
 
+#include "eeprom.h"
 #include "i2c.h"
 #include "node.h"
 #include "pcRead.h"
 #include "signals.h"
-#include "wifi_.h"
+#include "wifi.h"
 
 unsigned debug   = 1;
 int   error   = 0;
@@ -47,8 +48,8 @@ loop ()
     msec = millis ();
     ledStatus ();
 
+    wifiMonitor ();
     sigCheck ();
-//  wifi ();
     pcRead ();
 
     tglTest ();
@@ -63,9 +64,8 @@ void setup ()
 
     pinMode (PinLedGrn, OUTPUT);
 
-#ifdef I2C
+    eepromInit ();
     i2cInit ();
-#endif
     sigInit ();
 
 #ifdef SIM

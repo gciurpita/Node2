@@ -136,15 +136,6 @@ void pcRead ()
             pinMode (val, OUTPUT);
             break;
 
-        case 's':
-            printf (" pin %d  set\n", val);
-            digitalWrite (val, HIGH);
-            break;
-
-        case 'S':
-            eepromScan ();
-            break;
-
         case 'r':
             printf (" pin %d  %d\n", val, digitalRead (val));
             val = 0;
@@ -155,6 +146,19 @@ void pcRead ()
             eepromRead (val, buf, 40);
             Serial.println (buf);
             val = 0;
+            break;
+
+        case 's':
+            printf (" pin %d  set\n", val);
+            digitalWrite (val, HIGH);
+            break;
+
+        case 'S':
+            eepromScan ();
+            break;
+
+        case 't':
+            printf (" twr: %d %s\n", twr, "twr-name");
             break;
 
         case 'v':
@@ -193,6 +197,7 @@ void pcRead ()
             printf ("  #R   eepromRead\n");
             printf ("  #s   digitalWrite (#, HIGH)\n");
             printf ("   S   eepromScan\n");
+            printf ("   t   twr\n");
             printf ("   u   eepromtUpdate\n");
             printf ("   v   version\n");
             printf ("   W   eepromtWrite\n");

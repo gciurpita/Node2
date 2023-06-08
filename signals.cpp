@@ -6,12 +6,12 @@
 #include "node.h"
 // #include "ee.h"
 #include "signals.h"
-#include "wifi_.h"
+#include "wifi.h"
 
 // -----------------------------------------------------------------------------
 enum { BlackOut, Stop, Approach, Clear };
 
-TwrSym  twr = HY;
+TwrSym  twr;
 
 const char *StateStr [] = {
     "BlackOut",
@@ -275,10 +275,34 @@ void sigCheck (void)
 // -----------------------------------------------------------------------------
 void sigInit (void)
 {
-    printf ("%s: twr %d %s\n", __func__, twr, twrs [twr].sym);
+    printf ("%s:\n", __func__);
+
+    for (int n = 1; n < Ntwr; n++)  {
+#if 1
+        if (! strcmp (twrs [n].name, host))  {
+            twr = (TwrSym) n;
+            break;
+        }
+#elif 0
+        printf ("  %s: %d: \n", __func__, n);
+#else
+        printf ("  %s: %d: %d %s %s\n", __func__,
+            n, twrs [n].id, twrs [n].sym, twrs [n].name);
+#endif
+    }
+
+    if (! twr)  {
+        printf (" %s: unknown twr %s\n", __func__, host);
+        return;
+    }
+
+    printf (" %s: twr %d %s\n", __func__, twr, twrs [twr].sym);
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
+        if  (s->twr != twr || 0 == s->idx)
+            continue;
+
         // get occ ptr to next blk
         if (s->blkNxt)  {
             SigMap *t = _sigGetBlk (s->blkNxt);
