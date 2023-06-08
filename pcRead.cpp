@@ -142,10 +142,7 @@ void pcRead ()
             break;
 
         case 'R':
-            char buf [40];
-            eepromRead (val, buf, 40);
-            Serial.println (buf);
-            val = 0;
+            ESP.restart ();
             break;
 
         case 's':
@@ -194,7 +191,7 @@ void pcRead ()
             printf ("   p   processor type\n");
             printf ("  #O   pinMode (#, OUTPUT)\n");
             printf ("  #r   digitalRead (#)\n");
-            printf ("  #R   eepromRead\n");
+            printf ("   R   reset\n");
             printf ("  #s   digitalWrite (#, HIGH)\n");
             printf ("   S   eepromScan\n");
             printf ("   t   twr\n");

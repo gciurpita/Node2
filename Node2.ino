@@ -48,7 +48,7 @@ loop ()
     msec = millis ();
     ledStatus ();
 
-    wifiMonitor ();
+ // wifiMonitor ();
     sigCheck ();
     pcRead ();
 

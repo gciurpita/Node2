@@ -74,7 +74,7 @@ eepromLoad (void)
 
     while (1) {
         type = EEPROM.read (addr++);
-        if (ID_END == type)
+        if (ID_END == type || 0 == type)
             return;
 
         len   = EEPROM.read (addr++);
