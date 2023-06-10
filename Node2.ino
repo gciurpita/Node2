@@ -1,4 +1,4 @@
-const char *version = "MD & WV Node2 - 230610b";    // from 0425a
+const char *version = "MD & WV Node2 - 230610c";    // from 0425a
 
 #include <Arduino.h>
 
@@ -48,7 +48,7 @@ loop ()
     msec = millis ();
     ledStatus ();
 
- // wifiMonitor ();
+    wifiMonitor ();
     sigCheck ();
     pcRead ();
 

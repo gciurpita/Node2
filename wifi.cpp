@@ -114,10 +114,13 @@ const char *wifiStStr [] = {
 int state    = ST_NUL;
 int stateLst = ST_NUL;
 
+void wifiScan (void);
+
 // -------------------------------------
 // connect to wifi
 void wifiInit (void)
 {
+    wifiScan ();
     WiFi.mode (WIFI_STA);
 
 #ifdef ESP32
@@ -136,6 +139,7 @@ void wifiInit (void)
 bool
 wifiCheck (void)
 {
+    static int           fails = 0;
     static unsigned long msecLst = 0;
 
     if ( (msec - msecLst) < 1000)
@@ -144,8 +148,14 @@ wifiCheck (void)
 
     printf (" %s:", __func__);
 
+    if (6 <= fails)  {
+        wifiScan ();
+        return false;
+    }
+
     if (WL_CONNECTED != WiFi.status ())  {
         printf (" not connected\n");
+        fails++;
         return false;
    }
 
@@ -226,6 +236,32 @@ wifiSend (
                 Serial.print ("  send succeeded to  ");
                 Serial.println (p->ip);
             }
+        }
+    }
+}
+
+// -------------------------------------
+// https://openlabpro.com/guide/scanning-of-wifi-on-esp32-controller/
+void
+wifiScan (void)
+{
+    printf ("%s:", __func__);
+
+    // WiFi.scanNetworks will return the number of networks found
+    WiFi.mode (WIFI_OFF);
+    int nNet = WiFi.scanNetworks ();
+    if (nNet == 0) {
+        printf ("  no networks found\n");
+    }
+    else {
+        printf ("  %2d networks found\n", nNet);
+        if (0 > nNet)
+            nNet = -nNet;
+        for (int i = 0; i < nNet; ++i) {
+            printf (" %s: %2d - %s (%d) %s\n", __func__, i,
+                WiFi.SSID (i).c_str (),
+                WiFi.RSSI (i),
+                WiFi.encryptionType (i) == WIFI_AUTH_OPEN ? "open" : "locked");
         }
     }
 }
