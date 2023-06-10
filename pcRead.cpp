@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "eeProm.h"
+#include "i2c.h"
 #include "node.h"
 #include "pcRead.h"
 #include "signals.h"
@@ -61,6 +62,7 @@ _cli (
 // -----------------------------------------------------------------------------
 void pcRead ()
 {
+    static int  adr = 0;
     static int  val = 0;
     static bool quote = false;
     static char str [40];
@@ -103,6 +105,10 @@ void pcRead ()
             }
             break;
 
+        case 'a':
+            adr = val;
+            break;
+
         case 'c':
             printf (" pin %d  set\n", val);
             digitalWrite (val, LOW);
@@ -110,6 +116,14 @@ void pcRead ()
 
         case 'C':
             eepromClear ();
+            break;
+
+        case 'D':
+            debug = val;
+            break;
+
+        case 'd':
+            i2cDump (val);
             break;
 
         case 'i':
@@ -120,20 +134,20 @@ void pcRead ()
             pinMode (val, INPUT_PULLUP);
             break;
 
-        case 'l':
+        case 'L':
             eepromLoad ();
-            break;
-
-        case 'o':
-            wifiSend ("ok");
-            break;
-
-        case 'p':
-            printf (" processor: %s\n", processor);
             break;
 
         case 'O':
             pinMode (val, OUTPUT);
+            break;
+
+        case 'o':
+            i2cWriteBit (adr, val);
+            break;
+
+        case 'p':
+            printf (" processor: %s\n", processor);
             break;
 
         case 'r':
@@ -180,14 +194,16 @@ void pcRead ()
             break;
 
         case '?':
-            printf ("   a   send \"antidisestablishmentarianism\"\n");
+            printf ("   a   set adr = #\n");
             printf ("  #c   digitalWrite (#, LOW)\n");
             printf ("   C   eepromClear\n");
+            printf ("  #D   debug = #\n");
+            printf ("   d   i2cDump\n");
             printf ("   i   sigInit\n");
             printf ("  #I   pinMode (#, INPUT_PULLUP)\n");
-            printf ("   l   eepromtLoad\n");
+            printf ("   L   eepromtLoad\n");
             printf ("   n   send name\n");
-            printf ("   o   send \"ok\"\n");
+            printf ("   o   i2cWriteBit (adr, #)\n");
             printf ("   p   processor type\n");
             printf ("  #O   pinMode (#, OUTPUT)\n");
             printf ("  #r   digitalRead (#)\n");

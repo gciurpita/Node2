@@ -97,32 +97,6 @@ void i2cWrite (
 
 // ---------------------------------------------------------
 void
-i2cWriteBit (
-    byte    adr,
-    bool    b )
-{
-    if (0xFF == adr)
-        return;
-
-    byte bit  = 1 << (adr & 7);
-    byte chip = adr >> 4;
-    byte port = adr & 0x8 ? GPIOB : GPIOA;
-
-    byte val;
-    if (b)
-        val   =  bit | i2cRead (chip, port);
-    else
-        val   = ~bit & i2cRead (chip, port);
-
-    if (4 & debug)
-        printf ("  %s: adr %d, %d, c %d, p %d, val 0x%02x\n",
-            __func__, adr, b, chip, port, val);
-
-    i2cWrite (chip, port, val);
-}
-
-// ---------------------------------------------------------
-void
 i2cWritePortBit (
     byte    adr,
     byte    port,
@@ -150,6 +124,15 @@ i2cWritePortBit (
         printf (" - 0x%02x\n", val);
 
     i2cWrite (chip, port, val);
+}
+
+// ---------------------------------------------------------
+void
+i2cWriteBit (
+    byte    adr,
+    bool    b )
+{
+    i2cWritePortBit (adr, GPIOA, b);
 }
 
 // ---------------------------------------------------------

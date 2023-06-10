@@ -300,7 +300,7 @@ void sigInit (void)
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
-        if  (s->twr != twr || 0 == s->idx)
+        if  (s->twr != twr)
             continue;
 
         // get occ ptr to next blk
@@ -312,9 +312,6 @@ void sigInit (void)
                     __func__, s->blk, s->blkNxt, t->desc);
             }
         }
-
-        if  (s->twr != twr)
-            continue;
 
         printf (" %s: blk %d, nxt %d, pin %2d, idx %d",
             __func__, s->blk, s->blkNxt, s->PinBlk, s->idx);
