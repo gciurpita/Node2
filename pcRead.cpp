@@ -43,6 +43,7 @@ _cli (
     else if (! strcmp (_toks [0], "ssid") && 2 == nTok)
         strcpy (ssid, _toks [1]);
 
+#if 0
     else if (! strcmp (_toks [0], "ipAdd") && 2 == nTok)
         wifiIpAdd (_toks [1]);
 
@@ -51,6 +52,7 @@ _cli (
 
     else if (! strcmp (_toks [0], "ipList"))
         wifiIpList ();
+#endif
 
     else {
         printf ("%s: invalid input\n", __func__);

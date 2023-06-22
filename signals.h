@@ -58,6 +58,6 @@ extern const int NsigMap;
 void sigInit   (void);
 void sigCheck  (void);
 void sigDisp   (void);
-void sigMsg    (char *msg);
+void sigMsg    (const char *msg);
 
 #endif

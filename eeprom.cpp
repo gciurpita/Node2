@@ -19,7 +19,7 @@ tlvs [] = {
     { ID_HOSTNAME, "hostname", host },
     { ID_SSID,     "ssid",     ssid },
     { ID_PASSWORD, "password", pass },
-    { ID_IP,       "ip",       0,   wifiIpAdd },
+ // { ID_IP,       "ip",       0,   wifiIpAdd },
 };
 const int Ntlvs = sizeof(tlvs) / sizeof(TLV);
 
@@ -164,11 +164,13 @@ eepromUpdate (void)
         if (tlvs [n].location)
             eepromWrite (tlvs [n].id, (const char *)tlvs [n].location);
 
+#if 0
         else if (ID_IP == tlvs [n].id)  {
             char *s;
             for (int idx = 0; NULL != (s = wifiIpGet (idx)); idx++)
                 eepromWrite (tlvs [n].id, s);
         }
+#endif
     }
 }
  

@@ -173,7 +173,7 @@ sigBlkSet (
 // -------------------------------------
 // process signal msgs
 void sigMsg (
-    char *msg)
+    const char *msg)
 {
     int  blk;
     int  occ;
