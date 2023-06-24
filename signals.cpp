@@ -109,14 +109,6 @@ _sigBlkPocc (
 // scan blocks on node
 void sigBlkMon (void)
 {
-#if 0
-    static unsigned long msecLst;
-    if (msec - msecLst < 1500)
-        return;
-
-    msecLst = msec;
-#endif
-
  // printf ("%s:\n", __func__);
 
     SigMap *s = sigMap;
@@ -124,12 +116,7 @@ void sigBlkMon (void)
         if  (s->twr != twr)
             continue;
 
-#ifdef I2C
         byte occ = ! i2cReadBit (s->PinBlk);   // active LOW
-#else
-        byte occ = ! digitalRead (s->PinBlk);   // active LOW
-#endif
- //     printf ("  %s: pin %2d, occ %d\n", __func__, s->PinBlk, occ);
 
         if (s->occ != occ)  {
             s->occ = occ;
@@ -216,7 +203,6 @@ void sigUpdate (void)
             // turn all LEDs off
             SigPin *p = & sigPin [s->idx - 1];
 
-#ifdef I2C
             for (unsigned i = 0; i < P_Size; i++)  {
                 if (0xFF != p->LedPins [i])
                     i2cWriteBit  (p->LedPins [i], ! s->On);
@@ -235,26 +221,6 @@ void sigUpdate (void)
                 i2cWriteBit  (p->LedPins [P_Wh], s->On);
                 break;
             }
-#else
-            for (unsigned i = 0; i < P_Size; i++)  {
-                if (0 != p->LedPins [i])
-                    digitalWrite (p->LedPins [i], ! s->On); 
-            }
-
-            // turn LEDs on
-            switch (s->state) {
-            case Stop:
-                digitalWrite (p->LedPins [P_Rd], s->On);
-                break;
-            case Approach:
-                digitalWrite (p->LedPins [P_Am], s->On);
-                break;
-            case Clear:
-                digitalWrite (p->LedPins [P_Gn], s->On);
-                digitalWrite (p->LedPins [P_Wh], s->On);
-                break;
-            }
-#endif
         }
     }
 }
@@ -274,17 +240,10 @@ void sigInit (void)
     printf ("%s:\n", __func__);
 
     for (int n = 1; n < Ntwr; n++)  {
-#if 1
         if (! strcmp (twrs [n].name, host))  {
             twr = (TwrSym) n;
             break;
         }
-#elif 0
-        printf ("  %s: %d: \n", __func__, n);
-#else
-        printf ("  %s: %d: %d %s %s\n", __func__,
-            n, twrs [n].id, twrs [n].sym, twrs [n].name);
-#endif
     }
 
     if (! twr)  {
@@ -318,28 +277,15 @@ void sigInit (void)
         }
         printf ("  %s\n", s->desc);
 
-#ifdef I2C
         i2cWritePortBit (s->PinBlk, IODIRA, Inp);
         i2cWritePortBit (s->PinBlk, GPPUA,  1);
-#else
-        pinMode (p->BlkOcc, INPUT_PULLUP);
-#endif
 
         if (s->idx)  {
             SigPin *p = & sigPin [s->idx - 1];
             for (unsigned i = 0; i < P_Size; i++)  {
                 printf ("  %s: %d ledPin %d\n", __func__, i, p->LedPins [i]);
                 if (0xFF != p->LedPins [i])  {
-#ifdef I2C
                     i2cWritePortBit (p->LedPins [i], IODIRA, Out);
-#else
-                    byte pin = p->LedPins [i];
-                    printf (" %2d", pin);
-                    pinMode (p->LedPins [i],   OUTPUT);
-                    digitalWrite (p->LedPins [i], s->On);
-                    delay (500);
-                    digitalWrite (p->LedPins [i], ! s->On);
-#endif
                 }
             }
         }

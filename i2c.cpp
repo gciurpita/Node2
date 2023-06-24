@@ -106,6 +106,15 @@ i2cWritePortBit (
     if (0xFF == adr)
         return;
 
+    if (0 == nChip)  {
+        if (IODIRA == port)  {
+            printf ("%s: pinMode %d %s\n", __func__, adr,
+                        Inp == b ? "INPUT_PULLUP" : "OUTPUT");
+            pinMode (adr, Inp == b ? INPUT_PULLUP : OUTPUT);
+        }
+        return;
+    }
+
     byte bit  = 1 << (adr & 7);
     byte chip = adr >> 4;
     port     += adr & 0x8 ? 1 : 0;
@@ -133,6 +142,11 @@ i2cWriteBit (
     byte    adr,
     bool    b )
 {
+    if (0 == nChip)  {
+        printf ("%s: digitWrite %d %d\n", __func__, adr, b);
+        digitalWrite (adr, b);
+    }
+
     i2cWritePortBit (adr, GPIOA, b);
 }
 
@@ -171,6 +185,9 @@ bool
 i2cReadBit (
     byte    adr )
 {
+    if (0 == nChip)
+        return digitalRead (adr);
+
     byte bit  = 1 << (adr & 7);
     byte chip = adr >> 4;
 
