@@ -42,7 +42,7 @@ sigDisp (void)
         printf (" %2s %3s", s->On ? "HI" : "LO", twrs [s->twr].sym);
 
         if (0 == s->idx)
-            printf ("   -   -   -");
+            printf ("   -   -   -   -");
         else {
             SigPin *p = & sigPin [s->idx-1];
             for (unsigned i = 0; i < P_Size; i++)
