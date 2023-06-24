@@ -3,13 +3,12 @@
 
 # include "Arduino.h"
 
-enum TwrSym {TwrNul, CB, HY, GA, LT, TwrLast };
+enum TwrSym {TwrNul, CB, HY, GA, TN, LT, TwrLast };
 
 struct Twr {
     TwrSym      id;
     const char *sym;
     const char *name;
-    const char *ip;
 };
 
 extern TwrSym    twr;
