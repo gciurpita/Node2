@@ -60,6 +60,7 @@ const char * portNames [] = {
 const int Nport = sizeof(portNames) / sizeof(char*);
 
 #define MAX_CHIP    8
+int nChip   = 0;
 
 // I2C definitions
 
@@ -190,7 +191,6 @@ i2cReadPortBit (
 }
 
 // ---------------------------------------------------------
-int nChip   = 0;
 
 void i2cCfg (void)
 {
