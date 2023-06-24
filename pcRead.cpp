@@ -111,6 +111,10 @@ void pcRead ()
             adr = val;
             break;
 
+        case 'b':
+            sigDisp ();
+            break;
+
         case 'c':
             printf (" pin %d  set\n", val);
             digitalWrite (val, LOW);
@@ -197,6 +201,7 @@ void pcRead ()
 
         case '?':
             printf ("   a   set adr = #\n");
+            printf ("   b   disp blk table\n");
             printf ("  #c   digitalWrite (#, LOW)\n");
             printf ("   C   eepromClear\n");
             printf ("  #D   debug = #\n");

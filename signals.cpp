@@ -29,24 +29,28 @@ sigDisp (void)
     printf ("%s:\n", __func__);
 
     printf ("    %3s %3s %3s %3s", "Blk", "Nxt", "pin", "idx");
-    printf ("  %3s %3s %3s  %3s %3s %3s %3s",
-        "blk", "nxt", "pre", "Red", "Amb", "Grn", "Whi");
-    printf ("  %2s %3s %3s %s\n", "On", "twr", "Sym", "desc");
+    printf (" %2s %3s", "On", "twr");
+    printf (" %3s %3s %3s %3s", "RD", "YE", "GN", "WH");
+    printf (" %3s  %s\n", "occ", "desc");
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
-        printf ("    %3d %3d %2d %d", s->blk, s->blkNxt, s->PinBlk, s->idx);
+        if  (s->twr != twr)
+            continue;
 
-#if 0
-        SigPin *p = & sigPin [s->idx];
-        printf ("  %3d %3d %3d ", p->BlkOcc, p->BlkNxt, p->BlkPre);
+        printf ("    %3d %3d %3d %3d", s->blk, s->blkNxt, s->PinBlk, s->idx);
+        printf (" %2s %3s", s->On ? "HI" : "LO", twrs [s->twr].sym);
 
-        for (unsigned i = 0; i < P_Size; i++)
-            printf (" %3d", p->LedPins [i]);
-#endif
+        if (0 == s->idx)
+            printf ("   -   -   -");
+        else {
+            SigPin *p = & sigPin [s->idx-1];
+            for (unsigned i = 0; i < P_Size; i++)
+                printf (" %3d", p->LedPins [i]);
+        }
 
-        printf ("  %2d %3d %3s %s", s->On, s->twr, twrs [s->twr].sym, s->desc);
-        printf ("\n");
+        printf (" %3s", s->occ ? "Occ" : "___");
+        printf ("  %s\n", s->desc);
     }
 }
 
