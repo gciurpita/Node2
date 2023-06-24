@@ -60,18 +60,10 @@ void sigReport (
     SigMap  *q )
 {
     char msg [20];
-    sprintf (msg, "blk %d %d,", q->blk, q->occ);
-    printf (" %s: %s\n", __func__,  msg);
+    sprintf  (msg, "blk %d %d,", q->blk, q->occ);
+    printf   (" %s: %s\n", __func__,  msg);
 
-#if 0
-    nodeSend (LT, msg);
-
-    SigMap *s = sigMap;
-    for (int n = 0; n < NsigMap; n++, s++)  {
-        if (s->blkNxt == q->blk && s->twr != twr)
-            nodeSend (s->twr, msg);
-    }
-#endif
+    wifiSend (msg);
 }
 
 // -------------------------------------
