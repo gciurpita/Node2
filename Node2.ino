@@ -1,4 +1,4 @@
-const char *version = "MD & WV Node2 - 230622b UDP";    // from 0425a
+const char *version = "MD & WV Node2 - 230624c UDP";    // from 0425a
 
 #include <Arduino.h>
 
@@ -69,12 +69,4 @@ void setup ()
     eepromInit ();
     i2cInit ();
     sigInit ();
-
-#ifdef SIM
-    Serial.println (" --------- SIM ---------");
-    for (unsigned n = 0; n < N_XS; n++)  {
-        pinMode (pinXs [n], INPUT_PULLUP);
-        stateXs [n] = digitalRead (pinXs [n]);
-    }
-#endif
 }
