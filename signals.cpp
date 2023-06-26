@@ -43,6 +43,8 @@ sigDisp (void)
 
         if (0 == s->idx)
             printf ("   -   -   -   -");
+        else if (100 <= s->idx)
+            printf (" %3d   -   -   -", s->idx - 100);
         else {
             SigPin *p = & sigPin [s->idx-1];
             for (unsigned i = 0; i < P_Size; i++)
@@ -113,7 +115,7 @@ void sigBlkMon (void)
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
-        if  (s->twr != twr)
+        if  (s->twr != twr || __ == s->PinBlk)
             continue;
 
         byte occ = ! i2cReadBit (s->PinBlk);   // active LOW
@@ -144,6 +146,9 @@ sigBlkSet (
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
+        if  (s->twr != twr)
+            continue;
+
         if  (s->blk == blk)  {
             s->occ = occ;
             return;
@@ -199,6 +204,12 @@ void sigUpdate (void)
             printf (" %s: twr %d %s, blk %d, state %d %s,  %s\n", __func__,
                 twr, twrs [twr].sym ,
                 s->blk, s->state, StateStr [s->state], s->desc);
+
+            // display pins
+            if (100 <= s->idx) {
+                i2cWriteBit  (s->idx - 100, Stop == s->state ? s->On : !s->On);
+                continue;
+            }
 
             // turn all LEDs off
             SigPin *p = & sigPin [s->idx - 1];
@@ -270,6 +281,14 @@ void sigInit (void)
 
         printf (" %s: blk %d, nxt %d, pin %2d, idx %d",
             __func__, s->blk, s->blkNxt, s->PinBlk, s->idx);
+
+        // display pins
+        if (100 <= s->idx) {
+            i2cWritePortBit (s->idx - 100, IODIRA, Out);
+            printf (", display pin %2d", s->idx - 100);
+            printf ("  %s\n", s->desc);
+            continue;
+        }
 
         if (s->idx)  {
             byte  *p = sigPin [s->idx - 1].LedPins;

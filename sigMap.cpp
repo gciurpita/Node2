@@ -26,6 +26,7 @@ Twr twrs [] = {
     { HY, "HY", "Hyndman"    },
     { GA, "GA", "Garrett"    },
     { TN, "TN", "Test-Node"  },
+    { DP, "DP", "Display"    },
 };
 const int Ntwr = sizeof(twrs)/sizeof(Twr);
 
@@ -33,9 +34,9 @@ const int Ntwr = sizeof(twrs)/sizeof(Twr);
 SigPin sigPin [] = {
  //      Red   Yel   Grn   Whi
     { {    7,    6,    5,    4 }, },
-    { {    7,    6,    5, 0xFF }, },
+    { {    7,    6,    5,   __ }, },
     { {    3,    2,    1,    0 }, },
-    { {   14, 0xFF,   15, 0xFF }, },
+    { {   14,   __,   15,   __ }, },
 };
 const int NsigPin = sizeof(sigPin) / sizeof (SigPin);
 
@@ -51,9 +52,9 @@ SigMap sigMap [] = {
 
  //   blk  nxt   pin  idx+1 on,  twr  desc
     { 100, 111,   33,     1,  HI,   CB, "B&O CB Loop" },
-    { 111, 121, 0xFF,     0,  HI,   CB, "B&O CB West" },
+    { 111, 121,   __,     0,  HI,   CB, "B&O CB West" },
 
-    { 121, 131, 0xFF,     0,  HI,   HY, "B&O HY West" },
+    { 121, 131,   __,     0,  HI,   HY, "B&O HY West" },
     { 131, 141,    8,     1,  HI,   HY, "B&O HY Sand" },
 
     { 141, 130,    8,     2,  LO,   GA, "B&O GA Loop" },
@@ -61,7 +62,17 @@ SigMap sigMap [] = {
 
     { 120, 110,    9,     3,  HI,   HY, "B&O Sand Patch East" },
 
-    { 110, 100, 0xFF,     0,  HI,   CB, "B&O CB East" },
+    { 110, 100,   __,     0,  HI,   CB, "B&O CB East" },
+
+    { 100, 111,   __,   101,  LO,   DP, "B&O CB Loop" },
+    { 111, 121,   __,   103,  LO,   DP, "B&O CB West" },
+    { 121, 131,   __,   105,  LO,   DP, "B&O HY West" },
+    { 131, 141,   __,   107,  LO,   DP, "B&O HY Sand" },
+
+    { 141, 130,   __,   108,  LO,   DP, "B&O DP Loop" },
+    { 130, 120,   __,   110,  LO,   DP, "B&O DP West" },
+    { 120, 110,   __,   112,  LO,   DP, "B&O Sand Patch East" },
+    { 110, 100,   __,   114,  LO,   DP, "B&O CB East" },
 
 //       __,_____________________,__________,____________,________   east
 // 200 /            210              220                    230

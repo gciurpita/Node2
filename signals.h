@@ -3,7 +3,10 @@
 
 # include "Arduino.h"
 
-enum TwrSym {TwrNul, CB, HY, GA, TN, LT, TwrLast };
+#define __    0xFF
+
+// sequence must match twrs [] in sigMap
+enum TwrSym {TwrNul, CB, HY, GA, TN, DP, TwrLast };
 
 struct Twr {
     TwrSym      id;
