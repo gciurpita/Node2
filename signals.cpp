@@ -146,9 +146,6 @@ sigBlkSet (
 
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
-        if  (s->twr != twr)
-            continue;
-
         if  (s->blk == blk)  {
             s->occ = occ;
             return;
