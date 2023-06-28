@@ -142,16 +142,23 @@ sigBlkSet (
     byte blk,
     byte occ )
 {
- // printf ("%s:\n", __func__);
+    printf ("%s: blk %d %d\n", __func__, blk, occ);
 
+    int     cnt = 0;
     SigMap *s = sigMap;
     for (int n = 0; n < NsigMap; n++, s++)  {
+        if  (s->twr != twr)
+            continue;
+
         if  (s->blk == blk)  {
             s->occ = occ;
-            return;
+            cnt++;
         }
     }
-    printf ("Error: %s - blk not found, %d\n", __func__, blk);
+
+    if (0 == cnt)
+        printf ("Error: %s - blk not found, %d\n", __func__, blk);
+
     return;
 }
 
