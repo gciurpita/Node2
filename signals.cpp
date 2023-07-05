@@ -289,6 +289,10 @@ void sigInit (void)
         // display pins
         if (100 <= s->idx) {
             i2cWritePortBit (s->idx - 100, IODIRA, Out);
+            i2cWriteBit     (s->idx - 100,  s->On);
+            delay (500);
+            i2cWriteBit     (s->idx - 100, !s->On);
+
             printf (", display pin %2d", s->idx - 100);
             printf ("  %s\n", s->desc);
             continue;
