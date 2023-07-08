@@ -64,15 +64,15 @@ SigMap sigMap [] = {
 
     { 110, 100,   __,     0,  HI,   CB, "B&O CB East" },
 
-    { 100, 111,   __,   101,  HI,   DP, "B&O CB Loop" },
-    { 111, 121,   __,   103,  HI,   DP, "B&O CB West" },
-    { 121, 131,   __,   105,  HI,   DP, "B&O HY West" },
-    { 131, 141,   __,   107,  HI,   DP, "B&O HY Sand" },
+    { 100, 111,   __,   104,  HI,   DP, "B&O CB Loop" },
+    { 111, 121,   __,   105,  HI,   DP, "B&O CB West" },
+    { 121, 131,   __,   108,  HI,   DP, "B&O HY West" },
+    { 131, 141,   __,   110,  HI,   DP, "B&O HY Sand" },
 
-    { 141, 130,   __,   108,  HI,   DP, "B&O DP Loop" },
-    { 130, 120,   __,   110,  HI,   DP, "B&O DP West" },
-    { 120, 110,   __,   112,  HI,   DP, "B&O Sand Patch East" },
-    { 110, 100,   __,   114,  HI,   DP, "B&O CB East" },
+    { 141, 130,   __,   111,  HI,   DP, "B&O DP Loop" },
+    { 130, 120,   __,   109,  HI,   DP, "B&O DP West" },
+    { 120, 110,   __,   107,  HI,   DP, "B&O Sand Patch East" },
+    { 110, 100,   __,   106,  HI,   DP, "B&O CB East" },
 
 //       __,_____________________,__________,____________,________   east
 // 200 /            210              220                    230
