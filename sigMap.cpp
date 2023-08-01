@@ -37,6 +37,7 @@ SigPin sigPin [] = {
     { {    7,    6,    5,   __ }, },
     { {    3,    2,    1,    0 }, },
     { {   14,   __,   15,   __ }, },
+    { {    4,   __,   __,   __ }, },    // brewery
 };
 const int NsigPin = sizeof(sigPin) / sizeof (SigPin);
 
@@ -51,8 +52,8 @@ SigMap sigMap [] = {
     { 141, 140,   33,     0,  HI,   TN, "Exp GA" },
 
  //   blk  nxt   pin  idx+1 on,  twr  desc
-    { 100, 111,   33,     1,  HI,   CB, "B&O CB Loop" },
-    { 111, 121,   __,     0,  HI,   CB, "B&O CB West" },
+    { 100, 111,    8,     2,  LO,   CB, "B&O CB Loop" },
+    { 111, 121,    9,     0,  HI,   CB, "B&O CB West" },
 
     { 121, 131,   __,     0,  HI,   HY, "B&O HY West" },
     { 131, 141,    8,     1,  HI,   HY, "B&O HY Sand" },
@@ -62,7 +63,7 @@ SigMap sigMap [] = {
 
     { 120, 110,    9,     3,  HI,   HY, "B&O Sand Patch East" },
 
-    { 110, 100,   __,     0,  HI,   CB, "B&O CB East" },
+    { 110, 100,   10,     5,  HI,   CB, "B&O CB East" },
 
     { 100, 111,   __,   104,  HI,   DP, "B&O CB Loop" },
     { 111, 121,   __,   105,  HI,   DP, "B&O CB West" },
@@ -72,6 +73,7 @@ SigMap sigMap [] = {
     { 141, 130,   __,   111,  HI,   DP, "B&O DP Loop" },
     { 130, 120,   __,   109,  HI,   DP, "B&O DP West" },
     { 120, 110,   __,   107,  HI,   DP, "B&O Sand Patch East" },
+
     { 110, 100,   __,   106,  HI,   DP, "B&O CB East" },
 
 //       __,_____________________,__________,____________,________   east
@@ -80,6 +82,7 @@ SigMap sigMap [] = {
 //                  211              221                   231
 //      cumerberland                  deal       myersdale   connelsville
 
+    { 200,   0,  11,     4,  HI,   CB, "WM  CB Loop" },
     { 221,   0,  10,     4,  HI,   HY, "WM  Deal East" },
 };
 const int NsigMap = sizeof(sigMap) / sizeof (SigMap);
