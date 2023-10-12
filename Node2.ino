@@ -1,4 +1,4 @@
-const char *version = "MD & WV Node2 - 230815a Hynmand Approach";
+const char *version = "MD & WV Node2 - 231012a";
 
 #include <Arduino.h>
 

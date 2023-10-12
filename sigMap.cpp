@@ -55,10 +55,10 @@ SigMap sigMap [] = {
     { 100, 111,    8,     2,  LO,   CB, "B&O CB Loop" },
     { 111, 121,    9,     0,  HI,   CB, "B&O CB West" },
 
-    { 121, 131,   __,     0,  HI,   HY, "B&O HY West" },
+    { 121, 131,   12,     0,  HI,   HY, "B&O HY West" },
     { 131, 141,    8,     1,  HI,   HY, "B&O HY Sand" },
 
-    { 141, 130,    8,     2,  LO,   GA, "B&O GA Loop" },
+    { 141, 130,   10,     2,  LO,   GA, "B&O GA Loop" },
     { 130, 120,    9,     0,  LO,   GA, "B&O GA West" },
 
     { 120, 110,    9,     3,  HI,   HY, "B&O Sand Patch East" },
@@ -83,7 +83,16 @@ SigMap sigMap [] = {
 //      cumerberland                  deal       myersdale   connelsville
 
     { 200,   0,  11,     4,  HI,   CB, "WM  CB Loop" },
+    { 210,   0, 108,     0,  HI,   CB, "WM  CB East" },
+    { 211,   0, 109,     0,  HI,   CB, "WM  CB West" },
+
+    { 220,   0,  11,     0,  HI,   HY, "WM  Deal West" },
     { 221,   0,  10,     4,  HI,   HY, "WM  Deal East" },
+
+    { 230,   0,  11,     0,  HI,   GA, "WM  GA East" },
+    { 231,   0,  12,     0,  HI,   GA, "WM  GA West" },
+    { 240,   0,  13,     0,  HI,   GA, "WM  GA Loop" },
+
 };
 const int NsigMap = sizeof(sigMap) / sizeof (SigMap);
 
