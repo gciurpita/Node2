@@ -83,8 +83,8 @@ SigMap sigMap [] = {
 //      cumerberland                  deal       myersdale   connelsville
 
     { 200,   0,  11,     4,  HI,   CB, "WM  CB Loop" },
-    { 210,   0, 108,     0,  HI,   CB, "WM  CB East" },
-    { 211,   0, 109,     0,  HI,   CB, "WM  CB West" },
+    { 210,   0,  24,     0,  HI,   CB, "WM  CB East" },
+    { 211,   0,  25,     0,  HI,   CB, "WM  CB West" },
 
     { 220,   0,  11,     0,  HI,   HY, "WM  Deal West" },
     { 221,   0,  10,     4,  HI,   HY, "WM  Deal East" },
