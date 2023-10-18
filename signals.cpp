@@ -120,7 +120,18 @@ void sigBlkMon (void)
 
         byte occ = ! i2cReadBit (s->PinBlk);   // active LOW
 
+        // capture timestamp when occupied
+        // don't recognize clear until 2 sec later
+        if (occ)
+            s->msec = msec ? msec : 1;
+
         if (s->occ != occ)  {
+            if (! occ)  {           // ignore false clear
+                if (s->msec && msec - s->msec < 2000)
+                    return;
+                s->msec = 0;
+            }
+
             s->occ = occ;
             printf ("%s: blk %d, pin %d, occ %d\n",
                     __func__, s->blk, s->PinBlk, s->occ);

@@ -45,6 +45,7 @@ struct SigMap {
     byte        stateLst;
 
     byte       *pOccNxt;
+    unsigned long msec;
 };
 
 enum { LO = LOW, HI = HIGH };
