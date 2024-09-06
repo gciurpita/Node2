@@ -75,6 +75,16 @@ SigMap sigMap [] = {
     { 120, 110,   __,   115,  HI,   DP, "B&O Sand Patch East" },
     { 110, 100,   __,   102,  HI,   DP, "B&O CB East" },
 
+// red leds
+    { 102,   0,   __,   116,  HI,   DP, "B&O CB Loop" },
+    { 113,   0,   __,   117,  HI,   DP, "B&O CB West" },
+    { 123,   0,   __,   119,  HI,   DP, "B&O HY West" },
+    { 133,   0,   __,   129,  HI,   DP, "B&O HY Sand" },
+    { 143,   0,   __,   128,  HI,   DP, "B&O DP Loop" },
+    { 132,   0,   __,   130,  HI,   DP, "B&O DP West" },
+    { 122,   0,   __,   131,  HI,   DP, "B&O Sand Patch East" },
+    { 112,   0,   __,   118,  HI,   DP, "B&O CB East" },
+
 //       __,_____________________,__________,____________,_____      east
 // 200 /            210              220         230
 //      ___,_____________________,__________,____________,_____/ 240 west
@@ -101,6 +111,16 @@ SigMap sigMap [] = {
     { 230, 220,   __,   109,  HI,   DP, "B&O DP West" },
     { 220, 210,   __,   107,  HI,   DP, "B&O Sand Patch East" },
     { 210, 200,   __,   106,  HI,   DP, "B&O CB East" },
+
+// red leds
+    { 202,   0,   __,   120,  HI,   DP, "B&O CB Loop" },
+    { 213,   0,   __,   121,  HI,   DP, "B&O CB West" },
+    { 223,   0,   __,   124,  HI,   DP, "B&O HY West" },
+    { 233,   0,   __,   126,  HI,   DP, "B&O HY Sand" },
+    { 242,   0,   __,   127,  HI,   DP, "B&O DP Loop" },
+    { 232,   0,   __,   125,  HI,   DP, "B&O DP West" },
+    { 222,   0,   __,   123,  HI,   DP, "B&O Sand Patch East" },
+    { 212,   0,   __,   122,  HI,   DP, "B&O CB East" },
 
 };
 const int NsigMap = sizeof(sigMap) / sizeof (SigMap);
