@@ -65,6 +65,12 @@ SigMap sigMap [] = {
 
     { 110, 100,   10,     5,  HI,   CB, "B&O CB East" },
 
+// short circuits
+    { 123,   0,   12,    26,  HI,   HY, "B&O HY West" },
+    { 133,   0,    8,    27,  HI,   HY, "B&O HY Sand" },
+    { 122,   0,    9,    27,  HI,   HY, "B&O Sand Patch East" },
+
+// display
     { 100, 111,   __,   100,  HI,   DP, "B&O CB Loop" },
     { 111, 121,   __,   101,  HI,   DP, "B&O CB West" },
     { 121, 131,   __,   103,  HI,   DP, "B&O HY West" },
@@ -95,32 +101,39 @@ SigMap sigMap [] = {
     { 210,   0,  24,     0,  HI,   CB, "WM  CB East" },
     { 211,   0,  25,     0,  HI,   CB, "WM  CB West" },
 
-    { 220,   0,  11,     0,  HI,   HY, "WM  Deal West" },
-    { 221,   0,  10,     4,  HI,   HY, "WM  Deal East" },
+    { 220,   0,  11,     0,  HI,   HY, "WM  Deal East" },
+    { 221,   0,  10,     4,  HI,   HY, "WM  Deal West" },
 
     { 230,   0,  11,     0,  HI,   GA, "WM  GA East" },
     { 231,   0,  12,     0,  HI,   GA, "WM  GA West" },
     { 240,   0,  13,     0,  HI,   GA, "WM  GA Loop" },
 
-    { 200, 211,   __,   104,  HI,   DP, "B&O CB Loop" },
-    { 211, 221,   __,   105,  HI,   DP, "B&O CB West" },
-    { 221, 231,   __,   108,  HI,   DP, "B&O HY West" },
-    { 231, 240,   __,   110,  HI,   DP, "B&O HY Sand" },
+// short circuits
+    { 222,   0,  11,    23,  HI,   HY, "WM  Deal East" },
+    { 223,   0,  10,    24,  HI,   HY, "WM  Deal West" },
 
-    { 240, 230,   __,   111,  HI,   DP, "B&O DP Loop" },
-    { 230, 220,   __,   109,  HI,   DP, "B&O DP West" },
-    { 220, 210,   __,   107,  HI,   DP, "B&O Sand Patch East" },
-    { 210, 200,   __,   106,  HI,   DP, "B&O CB East" },
+// display
+    { 200, 211,   __,   104,  HI,   DP, "WM CB Loop" },
+    { 211, 221,   __,   105,  HI,   DP, "WM CB West" },
+    { 221, 231,   __,   108,  HI,   DP, "WM Deal West" },
+
+    { 231, 240,   __,   110,  HI,   DP, "WM GA West" },
+    { 240, 230,   __,   111,  HI,   DP, "WM GA Loop" },
+
+    { 230, 220,   __,   109,  HI,   DP, "WM GA East" },
+    { 220, 210,   __,   107,  HI,   DP, "WM Deal East" },
+    { 210, 200,   __,   106,  HI,   DP, "WM CB East" },
 
 // red leds
-    { 202,   0,   __,   120,  HI,   DP, "B&O CB Loop" },
-    { 213,   0,   __,   121,  HI,   DP, "B&O CB West" },
-    { 223,   0,   __,   124,  HI,   DP, "B&O HY West" },
-    { 233,   0,   __,   126,  HI,   DP, "B&O HY Sand" },
-    { 242,   0,   __,   127,  HI,   DP, "B&O DP Loop" },
-    { 232,   0,   __,   125,  HI,   DP, "B&O DP West" },
-    { 222,   0,   __,   123,  HI,   DP, "B&O Sand Patch East" },
-    { 212,   0,   __,   122,  HI,   DP, "B&O CB East" },
+    { 202,   0,   __,   120,  HI,   DP, "WM CB Loop" },
+    { 213,   0,   __,   121,  HI,   DP, "WM CB West" },
+    { 223,   0,   __,   124,  HI,   DP, "WM Deal West" },
+    { 233,   0,   __,   126,  HI,   DP, "WM GA Sand" },
+    { 242,   0,   __,   127,  HI,   DP, "WM GA Loop" },
+
+    { 232,   0,   __,   125,  HI,   DP, "WM GA West" },
+    { 222,   0,   __,   123,  HI,   DP, "WM Deal East" },
+    { 212,   0,   __,   122,  HI,   DP, "WM CB East" },
 
 };
 const int NsigMap = sizeof(sigMap) / sizeof (SigMap);
