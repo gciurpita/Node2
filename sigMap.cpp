@@ -66,9 +66,9 @@ SigMap sigMap [] = {
     { 110, 100,   10,     5,  HI,   CB, "B&O CB East" },
 
 // short circuits
-    { 123,   0,   12,    26,  HI,   HY, "B&O HY West" },
-    { 133,   0,    8,    27,  HI,   HY, "B&O HY Sand" },
-    { 122,   0,    9,    27,  HI,   HY, "B&O Sand Patch East" },
+    { 123,   0,   28,     0,  HI,   HY, "B&O HY West" },
+    { 133,   0,   24,     0,  HI,   HY, "B&O HY Sand" },
+    { 122,   0,   25,     0,  HI,   HY, "B&O Sand Patch East" },
 
 // display
     { 100, 111,   __,   100,  HI,   DP, "B&O CB Loop" },
@@ -109,8 +109,8 @@ SigMap sigMap [] = {
     { 240,   0,  13,     0,  HI,   GA, "WM  GA Loop" },
 
 // short circuits
-    { 222,   0,  11,    23,  HI,   HY, "WM  Deal East" },
-    { 223,   0,  10,    24,  HI,   HY, "WM  Deal West" },
+    { 222,   0,  27,     0,  HI,   HY, "WM  Deal East" },
+    { 223,   0,  26,     0,  HI,   HY, "WM  Deal West" },
 
 // display
     { 200, 211,   __,   104,  HI,   DP, "WM CB Loop" },
