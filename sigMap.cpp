@@ -1,6 +1,22 @@
 #include "signals.h"
 
 //   MCP23017
+//  24 - GPB0  1  28 GPA7 - 23
+//  25 - GPB1  2  27 GPA6 - 22
+//  26 - GPB2  3  26 GPA5 - 21
+//  27 - GPB3  4  25 GPA4 - 20
+//  28 - GPB4  5  24 GPA3 - 19
+//  29 - GPB5  6  23 GPA2 - 18
+//  30 - GPB6  7  22 GPA1 - 17
+//  31 - GPB7  8  21 GPA0 - 16
+//        Vdd  9  20 INTA
+//        Vss 10  19 INTB
+//         NC 11  18 Nreset
+//        SCL 12  17 A2
+//        SDA 13  16 A1
+//         NC 14  15 A0
+
+
 //   8 - GPB0  1  28 GPA7 - 7
 //   9 - GPB1  2  27 GPA6 - 6
 //  10 - GPB2  3  26 GPA5 - 5
@@ -9,7 +25,6 @@
 //  13 - GPB5  6  23 GPA2 - 2
 //  14 - GPB6  7  22 GPA1 - 1
 //  15 - GPB7  8  21 GPA0 - 0
-
 //        Vdd  9  20 INTA
 //        Vss 10  19 INTB
 //         NC 11  18 Nreset
@@ -33,11 +48,11 @@ const int Ntwr = sizeof(twrs)/sizeof(Twr);
 // -------------------------------------
 SigPin sigPin [] = {
  //      Red   Yel   Grn   Whi
-    { {    7,    6,    5,    4 }, },
-    { {    7,    6,    5,   __ }, },
-    { {    3,    2,    1,    0 }, },
-    { {   14,   __,   15,   __ }, },
-    { {    4,   __,   __,   __ }, },    // brewery
+    { {    7,    6,    5,    4 }, },  // 1
+    { {    7,    6,    5,   __ }, },  // 2
+    { {    3,    2,    1,    0 }, },  // 3
+    { {   14,   __,   15,   __ }, },  // 4
+    { {    4,   __,   __,   __ }, },  // 5 - B&O eastbound brewery
 };
 const int NsigPin = sizeof(sigPin) / sizeof (SigPin);
 
@@ -50,8 +65,9 @@ SigMap sigMap [] = {
 //      cumerberland     hyndman  sand patch   myersdale   garrett
 
  //   blk  nxt   pin  idx+1 on,  twr  desc
-    { 100, 111,    8,     2,  LO,   CB, "B&O CB Loop" },
-    { 111, 121,    9,     0,  HI,   CB, "B&O CB West" },
+    { 110, 100,   12,     0,  HI,   CB, "B&O CB East" },
+    { 100, 111,   11,     2,  LO,   CB, "B&O CB Loop" },
+    { 111, 121,   13,     0,  HI,   CB, "B&O CB West" },
 
     { 121, 131,   12,     0,  HI,   HY, "B&O HY West" },
     { 131, 141,    8,     1,  HI,   HY, "B&O HY Sand" },
@@ -64,8 +80,9 @@ SigMap sigMap [] = {
     { 110, 100,   10,     5,  HI,   CB, "B&O CB East" },
 
 // short circuits
-    { 102, 111,   24,     0,  LO,   CB, "B&O CB Loop" },
-    { 113, 121,   25,     0,  HI,   CB, "B&O CB West" },
+    { 112,   0,   28,     0,  HI,   CB, "B&O CB East" },
+    { 102,   0,   27,     0,  LO,   CB, "B&O CB Loop" },
+    { 113,   0,   29,     0,  HI,   CB, "B&O CB West" },
 
     { 123, 131,   28,     0,  HI,   HY, "B&O HY West" },
     { 133, 141,   24,     0,  HI,   HY, "B&O HY Sand" },
@@ -104,9 +121,9 @@ SigMap sigMap [] = {
 //                  211              221         231
 //      cumerberland                  deal       myersdale   connelsville
 
-    { 200,   0,   11,     4,  HI,   CB, "WM  CB Loop" },
-    { 210,   0,   24,     0,  HI,   CB, "WM  CB East" },
-    { 211,   0,   25,     0,  HI,   CB, "WM  CB West" },
+    { 210, 200,    8,     0,  HI,   CB, "WM  CB East" },
+    { 200, 211,    9,     4,  HI,   CB, "WM  CB Loop" },
+    { 211, 221,   10,     0,  HI,   CB, "WM  CB West" },
 
     { 220,   0,   11,     0,  HI,   HY, "WM  Deal East" },
     { 221,   0,   10,     4,  HI,   HY, "WM  Deal West" },
@@ -116,9 +133,9 @@ SigMap sigMap [] = {
     { 240,   0,   13,     0,  HI,   GA, "WM  GA Loop" },
 
 // short circuits
-    { 202,   0,   27,     0,  HI,   CB, "WM  CB Loop" },
-    { 212,   0,   40,     0,  HI,   CB, "WM  CB East" },
-    { 213,   0,   41,     0,  HI,   CB, "WM  CB West" },
+    { 212,   0,   24,     0,  HI,   CB, "WM  CB East" },
+    { 202,   0,   25,     0,  HI,   CB, "WM  CB Loop" },
+    { 213,   0,   26,     0,  HI,   CB, "WM  CB West" },
 
     { 222,   0,   27,     0,  HI,   HY, "WM  Deal East" },
     { 223,   0,   26,     0,  HI,   HY, "WM  Deal West" },
