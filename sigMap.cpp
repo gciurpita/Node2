@@ -49,8 +49,6 @@ SigMap sigMap [] = {
 //           111       121                   131
 //      cumerberland     hyndman  sand patch   myersdale   garrett
 
-    { 141, 140,   33,     0,  HI,   TN, "Exp GA" },
-
  //   blk  nxt   pin  idx+1 on,  twr  desc
     { 100, 111,    8,     2,  LO,   CB, "B&O CB Loop" },
     { 111, 121,    9,     0,  HI,   CB, "B&O CB West" },
@@ -66,9 +64,18 @@ SigMap sigMap [] = {
     { 110, 100,   10,     5,  HI,   CB, "B&O CB East" },
 
 // short circuits
-    { 123,   0,   28,     0,  HI,   HY, "B&O HY West" },
-    { 133,   0,   24,     0,  HI,   HY, "B&O HY Sand" },
-    { 122,   0,   25,     0,  HI,   HY, "B&O Sand Patch East" },
+    { 102, 111,   24,     0,  LO,   CB, "B&O CB Loop" },
+    { 113, 121,   25,     0,  HI,   CB, "B&O CB West" },
+
+    { 123, 131,   28,     0,  HI,   HY, "B&O HY West" },
+    { 133, 141,   24,     0,  HI,   HY, "B&O HY Sand" },
+
+    { 143, 130,   26,     0,  LO,   GA, "B&O GA Loop" },
+    { 132, 120,   25,     0,  LO,   GA, "B&O GA West" },
+
+    { 122, 110,   25,     0,  HI,   HY, "B&O Sand Patch East" },
+
+    { 112, 100,   26,     0,  HI,   CB, "B&O CB East" },
 
 // display
     { 100, 111,   __,   100,  HI,   DP, "B&O CB Loop" },
@@ -97,20 +104,29 @@ SigMap sigMap [] = {
 //                  211              221         231
 //      cumerberland                  deal       myersdale   connelsville
 
-    { 200,   0,  11,     4,  HI,   CB, "WM  CB Loop" },
-    { 210,   0,  24,     0,  HI,   CB, "WM  CB East" },
-    { 211,   0,  25,     0,  HI,   CB, "WM  CB West" },
+    { 200,   0,   11,     4,  HI,   CB, "WM  CB Loop" },
+    { 210,   0,   24,     0,  HI,   CB, "WM  CB East" },
+    { 211,   0,   25,     0,  HI,   CB, "WM  CB West" },
 
-    { 220,   0,  11,     0,  HI,   HY, "WM  Deal East" },
-    { 221,   0,  10,     4,  HI,   HY, "WM  Deal West" },
+    { 220,   0,   11,     0,  HI,   HY, "WM  Deal East" },
+    { 221,   0,   10,     4,  HI,   HY, "WM  Deal West" },
 
-    { 230,   0,  11,     0,  HI,   GA, "WM  GA East" },
-    { 231,   0,  12,     0,  HI,   GA, "WM  GA West" },
-    { 240,   0,  13,     0,  HI,   GA, "WM  GA Loop" },
+    { 230,   0,   11,     0,  HI,   GA, "WM  GA East" },
+    { 231,   0,   12,     0,  HI,   GA, "WM  GA West" },
+    { 240,   0,   13,     0,  HI,   GA, "WM  GA Loop" },
 
 // short circuits
-    { 222,   0,  27,     0,  HI,   HY, "WM  Deal East" },
-    { 223,   0,  26,     0,  HI,   HY, "WM  Deal West" },
+    { 202,   0,   27,     0,  HI,   CB, "WM  CB Loop" },
+    { 212,   0,   40,     0,  HI,   CB, "WM  CB East" },
+    { 213,   0,   41,     0,  HI,   CB, "WM  CB West" },
+
+    { 222,   0,   27,     0,  HI,   HY, "WM  Deal East" },
+    { 223,   0,   26,     0,  HI,   HY, "WM  Deal West" },
+
+    { 232,   0,   27,     0,  HI,   GA, "WM  GA East" },
+    { 233,   0,   28,     0,  HI,   GA, "WM  GA West" },
+    { 242,   0,   29,     0,  HI,   GA, "WM  GA Loop" },
+
 
 // display
     { 200, 211,   __,   104,  HI,   DP, "WM CB Loop" },
