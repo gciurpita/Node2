@@ -77,8 +77,6 @@ SigMap sigMap [] = {
 
     { 120, 110,    9,     3,  HI,   HY, "B&O Sand Patch East" },
 
-    { 110, 100,   10,     5,  HI,   CB, "B&O CB East" },
-
 // short circuits
     { 112,   0,   28,     0,  HI,   CB, "B&O CB East" },
     { 102,   0,   27,     0,  LO,   CB, "B&O CB Loop" },
@@ -91,8 +89,6 @@ SigMap sigMap [] = {
     { 132, 120,   25,     0,  LO,   GA, "B&O GA West" },
 
     { 122, 110,   25,     0,  HI,   HY, "B&O Sand Patch East" },
-
-    { 112, 100,   26,     0,  HI,   CB, "B&O CB East" },
 
 // display
     { 100, 111,   __,   100,  HI,   DP, "B&O CB Loop" },
@@ -121,8 +117,8 @@ SigMap sigMap [] = {
 //                  211              221         231
 //      cumerberland                  deal       myersdale   connelsville
 
-    { 210, 200,    8,     0,  HI,   CB, "WM  CB East" },
-    { 200, 211,    9,     4,  HI,   CB, "WM  CB Loop" },
+    { 210, 200,    9,     0,  HI,   CB, "WM  CB East" },
+    { 200, 211,    8,     4,  HI,   CB, "WM  CB Loop" },
     { 211, 221,   10,     0,  HI,   CB, "WM  CB West" },
 
     { 220,   0,   11,     0,  HI,   HY, "WM  Deal East" },
@@ -133,8 +129,8 @@ SigMap sigMap [] = {
     { 240,   0,   13,     0,  HI,   GA, "WM  GA Loop" },
 
 // short circuits
-    { 212,   0,   24,     0,  HI,   CB, "WM  CB East" },
-    { 202,   0,   25,     0,  HI,   CB, "WM  CB Loop" },
+    { 212,   0,   25,     0,  HI,   CB, "WM  CB East" },
+    { 202,   0,   24,     0,  HI,   CB, "WM  CB Loop" },
     { 213,   0,   26,     0,  HI,   CB, "WM  CB West" },
 
     { 222,   0,   27,     0,  HI,   HY, "WM  Deal East" },

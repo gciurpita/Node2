@@ -192,6 +192,12 @@ i2cReadBit (
     byte chip = adr >> 4;
 
     byte port = adr & 0x8 ? GPIOB : GPIOA;
+
+#if 0
+    printf ("  %s: adr %2d, chip %d, bit 0x%02x, port 0x%02x, val 0x%02x\n",
+            __func__, adr, chip, bit, port, bit&port);
+#endif
+
     return bit & i2cRead (chip, port);
 }
 

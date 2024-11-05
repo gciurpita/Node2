@@ -63,7 +63,9 @@ void sigReport (
 {
     char msg [20];
     sprintf  (msg, "blk %d %d,", q->blk, q->occ);
+#if 0
     printf   (" %s: %s\n", __func__,  msg);
+#endif
 
     wifiSend (msg);
 }
@@ -254,12 +256,45 @@ void sigUpdate (void)
 }
 
 // -------------------------------------
+void sigPeriodic (void)
+{
+    static unsigned long msecPeriod;
+    static unsigned long msec0;
+    static unsigned      n = 0;
+
+    if (NsigMap <= n)
+        n = 0;
+
+    SigMap *s = & sigMap [n];
+
+    if (s->twr == twr) {
+        unsigned long msec = millis ();
+        if (msec - msec0 < msecPeriod)
+            return;
+
+        msec0      = msec;
+        msecPeriod = random (500, 2000);
+
+        sigReport (s);
+
+#if 0
+        printf ("%s: msec %4lu, n %2d, blk %3d, occ %d  %s\n",
+            __func__, msecPeriod, n, s->blk, s->occ, s->desc);
+#endif
+        n++;
+    }
+    else
+        n++;
+}
+
+// -------------------------------------
 void sigCheck (void)
 {
  // printf ("%s:\n", __func__);
 
     sigBlkMon ();
     sigUpdate ();
+    sigPeriodic ();
 }
 
 // -----------------------------------------------------------------------------
@@ -311,6 +346,7 @@ void sigInit (void)
             continue;
         }
 
+        // input pins
         if (s->idx)  {
             byte  *p = sigPin [s->idx - 1].LedPins;
             printf (", %2d %2d %2d %2d", p [0], p [1], p [2], p [3]);
