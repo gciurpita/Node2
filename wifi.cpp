@@ -133,7 +133,8 @@ static void
 _wifiMsg (
     const char *msg)
 {
-    printf (" %s:\n", __func__);
+    if (dbgWifi)
+        printf (" %s:\n", __func__);
 
     sigMsg (msg);
 }

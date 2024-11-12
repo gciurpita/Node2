@@ -156,6 +156,10 @@ void pcRead ()
             printf (" processor: %s\n", processor);
             break;
 
+        case 'q':
+            dbgWifi = dbgSig = 0;
+            break;
+
         case 'r':
             printf (" pin %d  %d\n", val, digitalRead (val));
             val = 0;

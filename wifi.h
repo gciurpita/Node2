@@ -1,6 +1,8 @@
 #ifndef WIFI_H
 # define WIFI_H
 
+extern int  dbgWifi;
+
 const unsigned STR_SIZE = 40;
 
 extern char host [STR_SIZE];

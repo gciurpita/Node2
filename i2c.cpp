@@ -78,6 +78,8 @@ const int IoOut  = 0x00;
 byte chip    = Chip20;
 byte port    = GPIOA;
 
+int  dbgI2c;
+
 // ---------------------------------------------------------
 void i2cWrite (
     byte    chip,
@@ -86,7 +88,7 @@ void i2cWrite (
 {
     chip += chip < Chip20 ? Chip20 : 0;
 
-    if (8 & debug)
+    if (8 & dbgI2c)
         printf ("   %s: c 0x%02x, p %2d, v 0x%02x\n",
             __func__, chip, port, val);
 
@@ -121,7 +123,7 @@ i2cWritePortBit (
 
     byte val = i2cRead (chip, port);
 
-    if (4 & debug)
+    if (4 & dbgI2c)
         printf ("  %s: adr %2d, %d, c %d, p %2d, b 0x%02x, val 0x%02x",
             __func__, adr, b, chip, port, bit, val);
 
@@ -130,7 +132,7 @@ i2cWritePortBit (
     else
         val  &= ~bit;
 
-    if (1 < debug)
+    if (1 < dbgI2c)
         printf (" - 0x%02x\n", val);
 
     i2cWrite (chip, port, val);
@@ -156,7 +158,7 @@ i2cRead (
     byte    chip,
     byte    port )
 {
-    if (8 & debug)
+    if (8 & dbgI2c)
         return 0xFF;
 
     chip += chip < Chip20 ? Chip20 : 0;
@@ -168,7 +170,7 @@ i2cRead (
     Wire.requestFrom ((int)chip, 1); //get 1 byte
     byte val =  Wire.read ();
 
-    if (16 & debug)  {
+    if (16 & dbgI2c)  {
         Serial.print (F ("  i2cRead: chip "));
         Serial.print (chip, HEX);
         Serial.print (", port ");
@@ -334,7 +336,7 @@ void bitTgl (
     byte    val0  = i2cRead (chip, reg);
     byte    val1 = val0 ^ (1 << bit);
 
-    if (4 & debug) {
+    if (4 & dbgI2c) {
         sprintf (s, " %s: chip %d, bit %d, val0 0x%02x, val1 0x%02x",
             __func__, chip, bit, val0, val1);
         Serial.println (s);

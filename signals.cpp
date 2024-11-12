@@ -8,6 +8,8 @@
 #include "signals.h"
 #include "wifi.h"
 
+int  dbgSig = 1;
+
 // -----------------------------------------------------------------------------
 enum { BlackOut, Stop, Approach, Clear };
 
@@ -166,6 +168,9 @@ sigBlkSet (
 #endif
 
         if  (s->blk == blk)  {
+            if (s->occ != occ)
+                printf ("%s: blk %d %d\n", __func__, blk, occ);
+
             s->occ = occ;
             cnt++;
         }
@@ -185,7 +190,8 @@ void sigMsg (
     int  blk;
     int  occ;
 
-    printf ("%s: %s\n", __func__, msg);
+    if (dbgSig)
+        printf ("%s: %s\n", __func__, msg);
 
     if (! strncmp (msg, "blk", 3))  {
         sscanf (msg, "blk %d %d", &blk, & occ);

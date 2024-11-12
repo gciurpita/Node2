@@ -5,6 +5,8 @@
 
 #define __    0xFF
 
+extern int  dbgSig;
+
 // sequence must match twrs [] in sigMap
 enum TwrSym {TwrNul, CB, HY, GA, TN, DP, TwrLast };
 
