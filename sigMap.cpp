@@ -121,12 +121,12 @@ SigMap sigMap [] = {
     { 200, 211,    8,     4,  HI,   CB, "WM  CB Loop" },
     { 211, 221,   10,     0,  HI,   CB, "WM  CB West" },
 
-    { 220,   0,   11,     0,  HI,   HY, "WM  Deal East" },
-    { 221,   0,   10,     4,  HI,   HY, "WM  Deal West" },
+    { 220, 210,   11,     0,  HI,   HY, "WM  Deal East" },
+    { 221, 231,   10,     4,  HI,   HY, "WM  Deal West" },
 
-    { 230,   0,   11,     0,  HI,   GA, "WM  GA East" },
-    { 231,   0,   12,     0,  HI,   GA, "WM  GA West" },
-    { 240,   0,   13,     0,  HI,   GA, "WM  GA Loop" },
+    { 230, 220,   11,     0,  HI,   GA, "WM  GA East" },
+    { 231, 240,   12,     0,  HI,   GA, "WM  GA West" },
+    { 240, 230,   13,     0,  HI,   GA, "WM  GA Loop" },
 
 // short circuits
     { 212,   0,   25,     0,  HI,   CB, "WM  CB East" },
